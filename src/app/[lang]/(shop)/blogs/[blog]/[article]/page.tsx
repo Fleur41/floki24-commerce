@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getDictionary } from "@/i18n/server";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { formatDate } from "@/lib/format";
 import { getArticle } from "@/lib/shopify/content";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -33,7 +33,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
 async function ArticleContent({ params }: Pick<ArticlePageProps, "params">) {
   const { blog, article: handle } = await params;
-  const [article, dictionary] = await Promise.all([getArticle(blog, handle), getDictionary()]);
+  const [article, dictionary, locale] = await Promise.all([
+    getArticle(blog, handle),
+    getDictionary(),
+    getLocale(),
+  ]);
   if (!article) notFound();
 
   return (
@@ -43,7 +47,7 @@ async function ArticleContent({ params }: Pick<ArticlePageProps, "params">) {
         parents={[{ title: dictionary.blog.news, href: `/blogs/${blog}` }]}
       />
       <p className={styles.meta}>
-        <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+        <time dateTime={article.publishedAt}>{formatDate(article.publishedAt, locale)}</time>
         {article.authorName && ` · ${article.authorName}`}
       </p>
       {article.image && (

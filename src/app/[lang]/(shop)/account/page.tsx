@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { getDictionary } from "@/i18n/server";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { getSessionCustomer } from "@/lib/customer-session";
 import { formatDate, formatMoney } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
@@ -27,7 +27,11 @@ export default async function AccountPage() {
 }
 
 async function AccountOverview() {
-  const [customer, { account: t }] = await Promise.all([getSessionCustomer(), getDictionary()]);
+  const [customer, { account: t }, locale] = await Promise.all([
+    getSessionCustomer(),
+    getDictionary(),
+    getLocale(),
+  ]);
   if (!customer) redirect("/account/session-expired");
 
   const name = [customer.firstName, customer.lastName].filter(Boolean).join(" ");
@@ -54,7 +58,7 @@ async function AccountOverview() {
                   <td>
                     <a href={order.statusUrl}>#{order.orderNumber}</a>
                   </td>
-                  <td>{formatDate(order.processedAt)}</td>
+                  <td>{formatDate(order.processedAt, locale)}</td>
                   <td>
                     {t.fulfillment[order.fulfillmentStatus as keyof typeof t.fulfillment] ??
                       order.fulfillmentStatus}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { format } from "@/i18n/config";
-import { getDictionary } from "@/i18n/server";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { formatDate } from "@/lib/format";
 import { getMockOrder } from "@/lib/shopify/mock-orders";
 import { ButtonLink } from "@/components/ui/Button";
@@ -31,9 +31,10 @@ export default async function OrderPage(props: PageProps<"/[lang]/checkout/order
 
 async function OrderConfirmation({ params }: PageProps<"/[lang]/checkout/orders/[id]">) {
   const { id } = await params;
-  const [order, { common, checkout, order: t }] = await Promise.all([
+  const [order, { common, checkout, order: t }, locale] = await Promise.all([
     getMockOrder(id),
     getDictionary(),
+    getLocale(),
   ]);
   if (!order) notFound();
 
@@ -52,7 +53,7 @@ async function OrderConfirmation({ params }: PageProps<"/[lang]/checkout/orders/
           <p>
             {format(t.received, {
               number: order.orderNumber,
-              date: formatDate(order.processedAt),
+              date: formatDate(order.processedAt, locale),
             })}
           </p>
           <div className={styles.details}>
