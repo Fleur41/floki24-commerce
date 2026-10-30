@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { useDictionary } from "@/i18n/client";
 import { formatMoney } from "@/lib/format";
 import type { Cart, ShopPolicy } from "@/lib/shopify/types";
 import { BagIcon, ChevronDownIcon } from "@/components/ui/icons";
@@ -30,16 +31,17 @@ export function Checkout({
   const [addressComplete, setAddressComplete] = useState(isAddressComplete(defaults));
   const [summaryOpen, setSummaryOpen] = useState(false);
   const termsRef = useRef<HTMLDialogElement>(null);
+  const { checkout: t } = useDictionary();
 
   return (
     <div className={styles.page}>
-      <aside className={styles.aside} aria-label="Bestellübersicht">
+      <aside className={styles.aside} aria-label={t.summary}>
         <div className={styles.asideInner}>
           <header className={styles.brand}>
             <Link href="/" className={styles.shopName}>
               {shopName}
             </Link>
-            <Link href="/cart" className={styles.bag} aria-label="Zurück zum Warenkorb">
+            <Link href="/cart" className={styles.bag} aria-label={t.backToCart}>
               <BagIcon />
             </Link>
           </header>
@@ -51,7 +53,7 @@ export function Checkout({
             onClick={() => setSummaryOpen((open) => !open)}
           >
             <span>
-              {summaryOpen ? "Bestellübersicht ausblenden" : "Bestellübersicht anzeigen"}
+              {summaryOpen ? t.hideSummary : t.showSummary}
               <ChevronDownIcon className={styles.toggleChevron} />
             </span>
             <strong>{formatMoney(cart.cost.totalAmount)}</strong>
@@ -67,10 +69,7 @@ export function Checkout({
 
       <main className={styles.main} id="main-content">
         <div className={styles.mainInner}>
-          <p className={styles.demoNotice}>
-            Demo-Shop: Bestellungen werden gespeichert, es wird aber keine Zahlung ausgelöst und
-            nichts versendet.
-          </p>
+          <p className={styles.demoNotice}>{t.demoNotice}</p>
           <CheckoutForm
             defaults={defaults}
             isLoggedIn={isLoggedIn}

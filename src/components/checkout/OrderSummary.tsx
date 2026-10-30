@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getDictionary } from "@/i18n/server";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/product";
 import type { Image as ShopifyImage, Money } from "@/lib/shopify/types";
@@ -21,7 +22,8 @@ type OrderSummaryProps = {
 };
 
 /** Read-only list of purchased items with totals, shared by checkout and order confirmation. */
-export function OrderSummary({ lines, subtotal, shipping, total }: OrderSummaryProps) {
+export async function OrderSummary({ lines, subtotal, shipping, total }: OrderSummaryProps) {
+  const { cart, checkout: t } = await getDictionary();
   return (
     <div className={styles.summary}>
       <ul className={styles.lines}>
@@ -39,7 +41,7 @@ export function OrderSummary({ lines, subtotal, shipping, total }: OrderSummaryP
                     className={styles.imageInner}
                   />
                 )}
-                <span className={styles.quantity} aria-label={`Menge ${line.quantity}`}>
+                <span className={styles.quantity} aria-label={`${t.quantity}${line.quantity}`}>
                   {line.quantity}
                 </span>
               </div>
@@ -54,15 +56,15 @@ export function OrderSummary({ lines, subtotal, shipping, total }: OrderSummaryP
       </ul>
       <dl className={styles.totals}>
         <div>
-          <dt>Zwischensumme</dt>
+          <dt>{cart.subtotal}</dt>
           <dd>{formatMoney(subtotal)}</dd>
         </div>
         <div>
-          <dt>Versand</dt>
-          <dd>{Number(shipping.amount) === 0 ? "Kostenlos" : formatMoney(shipping)}</dd>
+          <dt>{t.shipping}</dt>
+          <dd>{Number(shipping.amount) === 0 ? t.free : formatMoney(shipping)}</dd>
         </div>
         <div className={styles.grandTotal}>
-          <dt>Gesamt (inkl. MwSt.)</dt>
+          <dt>{t.totalInclVat}</dt>
           <dd>{formatMoney(total)}</dd>
         </div>
       </dl>

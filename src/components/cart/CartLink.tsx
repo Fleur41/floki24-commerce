@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import { CartIcon } from "@/components/ui/icons";
 import { useCart } from "./CartProvider";
 import styles from "./CartLink.module.css";
 
 function CartLinkView({ count }: { count: number }) {
-  const label = count > 0 ? `Warenkorb, ${count} Artikel` : "Warenkorb";
+  const { header } = useDictionary();
+  const label = count > 0 ? format(header.cartWithCount, { count }) : header.cart;
 
   return (
     <Link href="/cart" className={styles.link} aria-label={label}>

@@ -1,6 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { format } from "@/i18n/config";
+import { getRequestDictionary } from "@/i18n/server";
+import type { Dictionary } from "@/i18n/dictionaries/de";
 import { clearSessionCart, getSessionCart } from "@/lib/cart-session";
 import { getSessionCustomer } from "@/lib/customer-session";
 import { updateCartDiscountCodes } from "@/lib/shopify/cart";
@@ -11,7 +14,9 @@ import {
   type ShippingAddress,
 } from "@/lib/shopify/mock-orders";
 import type { Cart } from "@/lib/shopify/types";
-import { SHIPPING_COUNTRIES, paymentOption } from "./options";
+import { SHIPPING_COUNTRIES, localizePaymentOption, paymentOption } from "./options";
+
+type CheckoutErrors = Dictionary["checkout"]["errors"];
 
 export type CheckoutFormState = {
   status: "idle" | "error";
@@ -43,19 +48,23 @@ function readAddress(formData: FormData, prefix = ""): ShippingAddress {
 }
 
 /** Shopify-style messages, keyed like the form fields (with an optional prefix). */
-function validateAddress(address: ShippingAddress, prefix = ""): Record<string, string> {
+function validateAddress(
+  address: ShippingAddress,
+  t: CheckoutErrors,
+  prefix = "",
+): Record<string, string> {
   const errors: Record<string, string> = {};
   if (!SHIPPING_COUNTRIES.some((country) => country.code === address.country)) {
-    errors[prefix + "country"] = "Wir liefern nur in die Schweiz und nach Liechtenstein";
+    errors[prefix + "country"] = t.country;
   }
-  if (!address.firstName) errors[prefix + "firstName"] = "Geben Sie einen Vornamen ein";
-  if (!address.lastName) errors[prefix + "lastName"] = "Geben Sie einen Nachnamen ein";
-  if (!address.address1) errors[prefix + "address1"] = "Geben Sie eine Adresse ein";
-  if (!address.zip) errors[prefix + "zip"] = "Geben Sie eine Postleitzahl ein";
+  if (!address.firstName) errors[prefix + "firstName"] = t.firstName;
+  if (!address.lastName) errors[prefix + "lastName"] = t.lastName;
+  if (!address.address1) errors[prefix + "address1"] = t.address;
+  if (!address.zip) errors[prefix + "zip"] = t.zipRequired;
   else if (!ZIP_PATTERN.test(address.zip)) {
-    errors[prefix + "zip"] = "Geben Sie eine gültige Postleitzahl ein";
+    errors[prefix + "zip"] = t.zipInvalid;
   }
-  if (!address.city) errors[prefix + "city"] = "Geben Sie einen Ort ein";
+  if (!address.city) errors[prefix + "city"] = t.city;
   return errors;
 }
 
@@ -63,6 +72,8 @@ export async function placeOrder(
   _: CheckoutFormState,
   formData: FormData,
 ): Promise<CheckoutFormState> {
+  const { checkout } = await getRequestDictionary();
+  const t = checkout.errors;
   const email = String(formData.get("email") ?? "").trim();
   const paymentMethod = String(formData.get("paymentMethod") ?? "");
   const acceptsMarketing = formData.get("acceptsMarketing") === "on";
@@ -79,24 +90,25 @@ export async function placeOrder(
   );
 
   const fieldErrors: Record<string, string> = {
-    ...validateAddress(shippingAddress),
-    ...(billingAddress && validateAddress(billingAddress, "billing_")),
+    ...validateAddress(shippingAddress, t),
+    ...(billingAddress && validateAddress(billingAddress, t, "billing_")),
   };
-  if (!email) fieldErrors.email = "Geben Sie eine E-Mail-Adresse ein";
-  else if (!EMAIL_PATTERN.test(email))
-    fieldErrors.email = "Geben Sie eine gültige E-Mail-Adresse ein";
+  if (!email) fieldErrors.email = t.emailRequired;
+  else if (!EMAIL_PATTERN.test(email)) fieldErrors.email = t.emailInvalid;
 
   const option = paymentOption(paymentMethod);
-  if (!option) fieldErrors.paymentMethod = "Wählen Sie eine Zahlungsart";
+  if (!option) fieldErrors.paymentMethod = t.paymentMethod;
   else if (option.requiresProvider) {
-    fieldErrors.paymentMethod = `${option.title} ist im Demo-Shop nicht verfügbar. Bitte wählen Sie Kauf auf Rechnung oder Banküberweisung.`;
+    fieldErrors.paymentMethod = format(t.providerRequired, {
+      method: localizePaymentOption(option, checkout).title,
+    });
   }
 
   if (Object.keys(fieldErrors).length) return { status: "error", fieldErrors, values };
 
   // The order is built from the server-side cart, never from submitted data.
   const [cart, customer] = await Promise.all([getSessionCart(), getSessionCustomer()]);
-  if (!cart?.lines.length) return { status: "error", message: "Ihr Warenkorb ist leer.", values };
+  if (!cart?.lines.length) return { status: "error", message: t.cartEmpty, values };
 
   let orderId: string;
   try {
@@ -113,7 +125,7 @@ export async function placeOrder(
     console.error("Placing order failed", error);
     return {
       status: "error",
-      message: "Die Bestellung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+      message: t.orderFailed,
       values,
     };
   }
@@ -130,14 +142,13 @@ export async function placeOrder(
 
 export type DiscountResult = { ok: true; cart: Cart } | { ok: false; error: string };
 
-const INVALID_DISCOUNT = "Geben Sie einen gültigen Rabattcode ein";
-
 export async function applyDiscountCode(code: string): Promise<DiscountResult> {
+  const t = (await getRequestDictionary()).checkout.errors;
   const trimmed = code.trim();
-  if (!trimmed) return { ok: false, error: INVALID_DISCOUNT };
+  if (!trimmed) return { ok: false, error: t.discountInvalid };
 
   const cart = await getSessionCart();
-  if (!cart) return { ok: false, error: "Ihr Warenkorb ist leer." };
+  if (!cart) return { ok: false, error: t.cartEmpty };
 
   try {
     const existing = cart.discountCodes
@@ -151,16 +162,17 @@ export async function applyDiscountCode(code: string): Promise<DiscountResult> {
 
     // Shopify keeps unknown codes on the cart; drop it again so it doesn't linger.
     await updateCartDiscountCodes(cart.id, existing);
-    return { ok: false, error: INVALID_DISCOUNT };
+    return { ok: false, error: t.discountInvalid };
   } catch (error) {
     console.error("Applying discount code failed", error);
-    return { ok: false, error: "Der Rabattcode konnte nicht geprüft werden." };
+    return { ok: false, error: t.discountCheckFailed };
   }
 }
 
 export async function removeDiscountCode(code: string): Promise<DiscountResult> {
+  const t = (await getRequestDictionary()).checkout.errors;
   const cart = await getSessionCart();
-  if (!cart) return { ok: false, error: "Ihr Warenkorb ist leer." };
+  if (!cart) return { ok: false, error: t.cartEmpty };
 
   try {
     const remaining = cart.discountCodes
@@ -169,6 +181,6 @@ export async function removeDiscountCode(code: string): Promise<DiscountResult> 
     return { ok: true, cart: await updateCartDiscountCodes(cart.id, remaining) };
   } catch (error) {
     console.error("Removing discount code failed", error);
-    return { ok: false, error: "Der Rabattcode konnte nicht entfernt werden." };
+    return { ok: false, error: t.discountRemoveFailed };
   }
 }

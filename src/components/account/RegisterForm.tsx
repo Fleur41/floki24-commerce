@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { register, type AccountFormState } from "@/app/(shop)/account/actions";
+import { useDictionary } from "@/i18n/client";
+import { register, type AccountFormState } from "@/app/[lang]/(shop)/account/actions";
 import { Button } from "@/components/ui/Button";
 import styles from "./AccountForm.module.css";
 
@@ -9,6 +10,7 @@ const initialState: AccountFormState = { status: "idle" };
 
 export function RegisterForm() {
   const [state, formAction, isPending] = useActionState(register, initialState);
+  const { account } = useDictionary();
 
   if (state.status === "success") {
     return (
@@ -22,7 +24,7 @@ export function RegisterForm() {
     <form action={formAction} className={styles.form}>
       <div className={styles.row}>
         <label className={styles.field}>
-          Vorname
+          {account.firstName}
           <input
             className={styles.input}
             name="firstName"
@@ -32,7 +34,7 @@ export function RegisterForm() {
           />
         </label>
         <label className={styles.field}>
-          Nachname
+          {account.lastName}
           <input
             className={styles.input}
             name="lastName"
@@ -43,7 +45,7 @@ export function RegisterForm() {
         </label>
       </div>
       <label className={styles.field}>
-        E-Mail-Adresse
+        {account.email}
         <input
           className={styles.input}
           type="email"
@@ -54,7 +56,7 @@ export function RegisterForm() {
         />
       </label>
       <label className={styles.field}>
-        Passwort
+        {account.password}
         <input
           className={styles.input}
           type="password"
@@ -64,11 +66,11 @@ export function RegisterForm() {
           maxLength={40}
           required
         />
-        <span className={styles.hint}>Mindestens 8 Zeichen</span>
+        <span className={styles.hint}>{account.passwordHint}</span>
       </label>
       <label className={styles.checkbox}>
         <input type="checkbox" name="acceptsMarketing" />
-        Ich möchte den Newsletter mit Angeboten und Neuheiten erhalten.
+        {account.newsletterOptIn}
       </label>
       {state.status === "error" && (
         <p role="alert" className={styles.error}>
@@ -76,7 +78,7 @@ export function RegisterForm() {
         </p>
       )}
       <Button type="submit" size="large" fullWidth disabled={isPending}>
-        {isPending ? "Konto wird erstellt …" : "Konto erstellen"}
+        {isPending ? account.creating : account.createAccount}
       </Button>
     </form>
   );

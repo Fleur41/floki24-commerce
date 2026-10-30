@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, useTransition, type FormEvent } from "react";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/product";
 import type { Cart } from "@/lib/shopify/types";
@@ -21,6 +23,7 @@ type CheckoutSummaryProps = {
 export function CheckoutSummary({ cart, addressComplete, onCartChange }: CheckoutSummaryProps) {
   const [discountError, setDiscountError] = useState<string>();
   const [isPending, startTransition] = useTransition();
+  const { checkout: t } = useDictionary();
 
   const subtotal = cart.cost.subtotalAmount;
   const total = cart.cost.totalAmount;
@@ -67,7 +70,7 @@ export function CheckoutSummary({ cart, addressComplete, onCartChange }: Checkou
                   />
                 )}
                 <span className={styles.quantity}>
-                  <span className="visually-hidden">Menge: </span>
+                  <span className="visually-hidden">{t.quantity}</span>
                   {line.quantity}
                 </span>
               </div>
@@ -84,13 +87,13 @@ export function CheckoutSummary({ cart, addressComplete, onCartChange }: Checkou
       <form className={styles.discount} onSubmit={submitDiscount} noValidate>
         <Field
           name="discountCode"
-          label="Rabattcode"
+          label={t.discountCode}
           autoComplete="off"
           error={discountError}
           onInput={() => setDiscountError(undefined)}
         />
         <button type="submit" className={styles.applyButton} disabled={isPending}>
-          Anwenden
+          {t.apply}
         </button>
       </form>
       {appliedCodes.length > 0 && (
@@ -101,7 +104,7 @@ export function CheckoutSummary({ cart, addressComplete, onCartChange }: Checkou
               <button
                 type="button"
                 onClick={() => removeCode(code)}
-                aria-label={`Rabattcode ${code} entfernen`}
+                aria-label={format(t.removeCode, { code })}
                 disabled={isPending}
               >
                 <CloseIcon width={10} height={10} />
@@ -113,32 +116,32 @@ export function CheckoutSummary({ cart, addressComplete, onCartChange }: Checkou
 
       <dl className={styles.totals} aria-busy={isPending}>
         <div>
-          <dt>Zwischensumme · {cart.totalQuantity} Artikel</dt>
+          <dt>{format(t.subtotalItems, { count: cart.totalQuantity })}</dt>
           <dd>{formatMoney(subtotal)}</dd>
         </div>
         {discount > 0 && (
           <div>
-            <dt>Rabatt</dt>
+            <dt>{t.discount}</dt>
             <dd>−{formatMoney({ ...subtotal, amount: String(discount) })}</dd>
           </div>
         )}
         <div>
           <dt className={styles.withIcon}>
-            Versand
-            <span title="Versandkosten werden anhand der Lieferadresse berechnet.">
+            {t.shipping}
+            <span title={t.shippingHelp}>
               <HelpIcon width={16} height={16} />
             </span>
           </dt>
           <dd className={addressComplete ? undefined : styles.muted}>
-            {addressComplete ? "Kostenlos" : "Lieferadresse eingeben"}
+            {addressComplete ? t.free : t.enterAddress}
           </dd>
         </div>
         <div className={styles.grandTotal}>
-          <dt>Gesamt</dt>
+          <dt>{t.total}</dt>
           <dd>{formatMoney(total)}</dd>
         </div>
       </dl>
-      <p className={styles.vat}>inkl. {formatMoney(includedVat(total))} MwSt.</p>
+      <p className={styles.vat}>{format(t.inclVat, { amount: formatMoney(includedVat(total)) })}</p>
     </div>
   );
 }

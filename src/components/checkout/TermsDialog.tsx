@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type Ref } from "react";
+import { useDictionary } from "@/i18n/client";
 import type { ShopPolicy } from "@/lib/shopify/types";
 import { CloseIcon } from "@/components/ui/icons";
 import fieldStyles from "./fields.module.css";
@@ -15,6 +16,7 @@ type TermsDialogProps = {
 export function TermsDialog({ ref, policies }: TermsDialogProps) {
   const [handle, setHandle] = useState(policies[0]?.handle);
   const policy = policies.find((entry) => entry.handle === handle);
+  const { common, checkout } = useDictionary();
 
   return (
     <dialog
@@ -26,18 +28,15 @@ export function TermsDialog({ ref, policies }: TermsDialogProps) {
     >
       <div className={styles.dialogInner}>
         <header className={styles.dialogHeader}>
-          <h2 id="terms-title">AGB und Richtlinien</h2>
+          <h2 id="terms-title">{checkout.terms}</h2>
           <form method="dialog">
-            <button type="submit" className={styles.dialogClose} aria-label="Schliessen">
+            <button type="submit" className={styles.dialogClose} aria-label={common.close}>
               <CloseIcon />
             </button>
           </form>
         </header>
         {policies.length === 0 ? (
-          <p className={styles.muted}>
-            Es sind noch keine Richtlinien hinterlegt. Sie werden im Shopify-Admin unter
-            Einstellungen → Richtlinien gepflegt und erscheinen hier automatisch.
-          </p>
+          <p className={styles.muted}>{checkout.noPolicies}</p>
         ) : (
           <>
             <div className={`${fieldStyles.field} ${fieldStyles.select}`}>
@@ -54,7 +53,7 @@ export function TermsDialog({ ref, policies }: TermsDialogProps) {
                 ))}
               </select>
               <label htmlFor="policy" className={fieldStyles.label}>
-                Richtlinie
+                {checkout.policy}
               </label>
             </div>
             {policy && (

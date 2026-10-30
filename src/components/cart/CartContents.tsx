@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useOptimistic, useState, useTransition } from "react";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import { formatMoney, multiplyMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/product";
 import type { Cart, CartLine } from "@/lib/shopify/types";
@@ -43,12 +45,13 @@ function applyQuantity(cart: Cart, { lineId, quantity }: OptimisticUpdate): Cart
 
 export function CartContents() {
   const cart = useCart();
+  const { common, cart: t } = useDictionary();
 
   if (!cart?.lines.length) {
     return (
       <div className={styles.empty}>
-        <p>Ihr Warenkorb ist derzeit leer.</p>
-        <ButtonLink href="/">Weiter einkaufen</ButtonLink>
+        <p>{t.empty}</p>
+        <ButtonLink href="/">{common.continueShopping}</ButtonLink>
       </div>
     );
   }
@@ -58,6 +61,7 @@ export function CartContents() {
 
 function CartTable({ cart }: { cart: Cart }) {
   const { updateQuantity } = useCartActions();
+  const { cart: t } = useDictionary();
   const [optimisticCart, setOptimisticQuantity] = useOptimistic(cart, applyQuantity);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -85,14 +89,14 @@ function CartTable({ cart }: { cart: Cart }) {
         )}
       </div>
 
-      <aside className={styles.summary} aria-label="Bestellübersicht" aria-busy={isPending}>
+      <aside className={styles.summary} aria-label={t.summary} aria-busy={isPending}>
         <p className={styles.subtotal}>
-          <span>Zwischensumme</span>
+          <span>{t.subtotal}</span>
           <strong>{formatMoney(optimisticCart.cost.subtotalAmount)}</strong>
         </p>
-        <p className={styles.note}>Steuern und Versand werden beim Checkout berechnet.</p>
+        <p className={styles.note}>{t.taxNote}</p>
         <ButtonLink href={optimisticCart.checkoutUrl} size="large" fullWidth>
-          Kasse
+          {t.checkout}
         </ButtonLink>
       </aside>
     </div>
@@ -106,6 +110,7 @@ type CartLineItemProps = {
 
 function CartLineItem({ line, onQuantityChange }: CartLineItemProps) {
   const { merchandise } = line;
+  const { cart: t } = useDictionary();
   const href = `/products/${merchandise.product.handle}`;
   const variantTitle = variantLabel(merchandise.title);
 
@@ -133,7 +138,7 @@ function CartLineItem({ line, onQuantityChange }: CartLineItemProps) {
 
       <div className={styles.quantity}>
         <QuantitySelector
-          label={`Anzahl für ${merchandise.product.title}`}
+          label={format(t.quantityFor, { title: merchandise.product.title })}
           hideLabel
           min={0}
           value={line.quantity}
@@ -144,7 +149,7 @@ function CartLineItem({ line, onQuantityChange }: CartLineItemProps) {
           className={styles.remove}
           onClick={() => onQuantityChange(line.id, 0)}
         >
-          Entfernen
+          {t.remove}
         </button>
       </div>
 

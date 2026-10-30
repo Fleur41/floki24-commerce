@@ -1,4 +1,7 @@
+import type { Dictionary } from "@/i18n/dictionaries/de";
 import type { Money } from "@/lib/shopify/types";
+
+type CheckoutTexts = Dictionary["checkout"];
 
 /** floki24 ships to Switzerland and Liechtenstein only. */
 export const SHIPPING_COUNTRIES = [
@@ -6,8 +9,12 @@ export const SHIPPING_COUNTRIES = [
   { code: "LI", name: "Liechtenstein" },
 ] as const;
 
-export function countryName(code: string): string {
-  return SHIPPING_COUNTRIES.find((country) => country.code === code)?.name ?? code;
+export function countryName(code: string, texts: CheckoutTexts): string {
+  return texts.countries[code as keyof CheckoutTexts["countries"]] ?? code;
+}
+
+export function localizedCountries(texts: CheckoutTexts) {
+  return SHIPPING_COUNTRIES.map(({ code }) => ({ code, name: countryName(code, texts) }));
 }
 
 export type PaymentOption = {
@@ -50,6 +57,18 @@ export const PAYMENT_OPTIONS: PaymentOption[] = [
 
 export function paymentOption(value: string): PaymentOption | undefined {
   return PAYMENT_OPTIONS.find((option) => option.value === value);
+}
+
+/** The option with its title and description in the visitor's language. */
+export function localizePaymentOption(option: PaymentOption, texts: CheckoutTexts): PaymentOption {
+  const value = option.value as keyof CheckoutTexts["methods"];
+  return {
+    ...option,
+    title: texts.methods[value] ?? option.title,
+    description:
+      texts.methodDescriptions[value as keyof CheckoutTexts["methodDescriptions"]] ??
+      option.description,
+  };
 }
 
 /** Swiss standard VAT rate; prices are shown including VAT. */

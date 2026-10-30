@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import { formatMoney } from "@/lib/format";
 import { variantLabel } from "@/lib/product";
 import type { CartLine } from "@/lib/shopify/types";
@@ -41,6 +43,7 @@ type NotificationContentProps = {
 
 function NotificationContent({ line, onClose }: NotificationContentProps) {
   const cart = useCart();
+  const { common, cart: t } = useDictionary();
   const { merchandise } = line;
   const variantTitle = variantLabel(merchandise.title);
 
@@ -48,9 +51,9 @@ function NotificationContent({ line, onClose }: NotificationContentProps) {
     <div className={styles.content}>
       <div className={styles.header}>
         <h2 id="cart-notification-title" className={styles.title}>
-          Zu Ihrem Warenkorb hinzugefügt:
+          {t.added}
         </h2>
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Schliessen">
+        <button type="button" className={styles.close} onClick={onClose} aria-label={common.close}>
           <CloseIcon />
         </button>
       </div>
@@ -77,14 +80,14 @@ function NotificationContent({ line, onClose }: NotificationContentProps) {
       {cart && (
         <>
           <p className={styles.subtotal}>
-            Zwischensumme des Warenkorbs: <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
+            {t.cartSubtotal} <strong>{formatMoney(cart.cost.subtotalAmount)}</strong>
           </p>
           <div className={styles.actions}>
             <ButtonLink href="/cart" variant="secondary" onClick={onClose}>
-              Warenkorb anzeigen ({cart.totalQuantity})
+              {format(t.viewCart, { count: cart.totalQuantity })}
             </ButtonLink>
             <ButtonLink href={cart.checkoutUrl} onClick={onClose}>
-              Kasse
+              {t.checkout}
             </ButtonLink>
           </div>
         </>

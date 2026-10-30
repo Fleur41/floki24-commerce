@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentProps, ReactNode } from "react";
+import { useDictionary } from "@/i18n/client";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import styles from "./fields.module.css";
 
@@ -24,6 +25,7 @@ export function Field({
   ...props
 }: FieldProps) {
   const errorId = `${id}-error`;
+  const { common } = useDictionary();
   return (
     <div className={styles.wrap}>
       <div className={`${styles.field} ${error ? styles.invalid : ""}`}>
@@ -38,7 +40,7 @@ export function Field({
         />
         <label htmlFor={id} className={styles.label}>
           {label}
-          {optional && " (optional)"}
+          {optional && ` (${common.optional})`}
         </label>
         {adornment && <span className={styles.adornment}>{adornment}</span>}
       </div>

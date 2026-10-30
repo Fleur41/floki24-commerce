@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { login, type AccountFormState } from "@/app/(shop)/account/actions";
+import { useDictionary } from "@/i18n/client";
+import { login, type AccountFormState } from "@/app/[lang]/(shop)/account/actions";
 import { Button } from "@/components/ui/Button";
 import styles from "./AccountForm.module.css";
 
@@ -9,11 +10,12 @@ const initialState: AccountFormState = { status: "idle" };
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
+  const { account } = useDictionary();
 
   return (
     <form action={formAction} className={styles.form}>
       <label className={styles.field}>
-        E-Mail-Adresse
+        {account.email}
         <input
           className={styles.input}
           type="email"
@@ -24,7 +26,7 @@ export function LoginForm() {
         />
       </label>
       <label className={styles.field}>
-        Passwort
+        {account.password}
         <input
           className={styles.input}
           type="password"
@@ -39,7 +41,7 @@ export function LoginForm() {
         </p>
       )}
       <Button type="submit" size="large" fullWidth disabled={isPending}>
-        {isPending ? "Anmeldung läuft …" : "Anmelden"}
+        {isPending ? account.loggingIn : account.login}
       </Button>
     </form>
   );
