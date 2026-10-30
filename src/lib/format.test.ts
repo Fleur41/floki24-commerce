@@ -33,4 +33,10 @@ describe("formatDate", () => {
   it("uses the shop's time zone", () => {
     expect(formatDate("2024-09-26T23:30:00Z")).toBe("September 27, 2024");
   });
+
+  it("uses the language of the page", () => {
+    expect(formatDate("2024-09-26T23:30:00Z", "de")).toBe("27. September 2024");
+    expect(formatDate("2024-09-26T23:30:00Z", "fr")).toBe("27 septembre 2024");
+    expect(formatDate("2024-09-26T23:30:00Z", "it")).toBe("27 settembre 2024");
+  });
 });

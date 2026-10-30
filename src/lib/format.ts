@@ -1,3 +1,4 @@
+import type { Locale } from "@/i18n/config";
 import type { Money } from "@/lib/shopify/types";
 
 // The reference shop renders "CHF 1,999.00": currency code first, comma
@@ -28,12 +29,19 @@ export function discountPercentage(price: Money, compareAtPrice: Money | null): 
   return percentage > 0 ? percentage : null;
 }
 
-// Blog dates are shown in English on the reference shop ("September 27, 2024").
-const dateFormat = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "long",
-  timeZone: "Europe/Zurich",
-});
+/** Swiss conventions where they exist; English keeps the reference shop's "September 27, 2024". */
+const DATE_LOCALES: Record<Locale, string> = { de: "de-CH", en: "en-US", fr: "fr-CH", it: "it-CH" };
 
-export function formatDate(isoDate: string): string {
+const dateFormats = new Map<Locale, Intl.DateTimeFormat>();
+
+export function formatDate(isoDate: string, locale: Locale = "en"): string {
+  let dateFormat = dateFormats.get(locale);
+  if (!dateFormat) {
+    dateFormat = new Intl.DateTimeFormat(DATE_LOCALES[locale], {
+      dateStyle: "long",
+      timeZone: "Europe/Zurich",
+    });
+    dateFormats.set(locale, dateFormat);
+  }
   return dateFormat.format(new Date(isoDate));
 }
