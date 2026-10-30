@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary } from "@/i18n/server";
 import { listingParamNames, toURLSearchParams, type SearchParams } from "@/lib/listing-params";
 import type { PageInfo } from "@/lib/shopify/types";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
@@ -11,8 +12,9 @@ type PaginationProps = {
 };
 
 /** Previous/next navigation; the Storefront API paginates with cursors, not page numbers. */
-export function Pagination({ pathname, searchParams, pageInfo }: PaginationProps) {
+export async function Pagination({ pathname, searchParams, pageInfo }: PaginationProps) {
   if (!pageInfo.hasPreviousPage && !pageInfo.hasNextPage) return null;
+  const { listing } = await getDictionary();
 
   const hrefWithCursor = (name: "after" | "before", cursor: string | null) => {
     const params = toURLSearchParams(searchParams);
@@ -23,16 +25,16 @@ export function Pagination({ pathname, searchParams, pageInfo }: PaginationProps
   };
 
   return (
-    <nav className={styles.pagination} aria-label="Seitennavigation">
+    <nav className={styles.pagination} aria-label={listing.pagination}>
       {pageInfo.hasPreviousPage && (
         <Link href={hrefWithCursor("before", pageInfo.startCursor)} className={styles.link}>
           <ChevronLeftIcon />
-          Vorherige Seite
+          {listing.previousPage}
         </Link>
       )}
       {pageInfo.hasNextPage && (
         <Link href={hrefWithCursor("after", pageInfo.endCursor)} className={styles.link}>
-          Nächste Seite
+          {listing.nextPage}
           <ChevronRightIcon />
         </Link>
       )}

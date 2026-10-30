@@ -1,3 +1,4 @@
+import { getDictionary } from "@/i18n/server";
 import type { SearchParams } from "@/lib/listing-params";
 import { getCheckboxFilters } from "@/lib/shopify/listing";
 import type { ProductListing as ProductListingData } from "@/lib/shopify/types";
@@ -16,13 +17,14 @@ type ProductListingProps = {
 };
 
 /** Filter sidebar, sort toolbar, product grid and pagination of collection and search pages. */
-export function ProductListing({
+export async function ProductListing({
   listing,
   sortOptions,
   sortValue,
   pathname,
   searchParams,
 }: ProductListingProps) {
+  const { common, listing: t } = await getDictionary();
   const filters = getCheckboxFilters(listing.filters);
   const hasFilters = filters.length > 0;
 
@@ -32,10 +34,16 @@ export function ProductListing({
 
       <div>
         <div className={styles.toolbar}>
-          <SortSelect options={sortOptions} value={sortValue} />
+          <SortSelect
+            options={sortOptions.map((option) => ({
+              ...option,
+              label: t.sort[option.value as keyof typeof t.sort] ?? option.label,
+            }))}
+            value={sortValue}
+          />
         </div>
 
-        <h2 className="visually-hidden">Produkte</h2>
+        <h2 className="visually-hidden">{common.products}</h2>
         {listing.products.length ? (
           <ul className={styles.grid}>
             {listing.products.map((product, index) => (
@@ -45,7 +53,7 @@ export function ProductListing({
             ))}
           </ul>
         ) : (
-          <p className={styles.empty}>Leider wurden keine Produkte gefunden.</p>
+          <p className={styles.empty}>{t.noProducts}</p>
         )}
 
         <Pagination pathname={pathname} searchParams={searchParams} pageInfo={listing.pageInfo} />

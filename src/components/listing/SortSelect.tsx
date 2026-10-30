@@ -1,5 +1,6 @@
 "use client";
 
+import { useDictionary } from "@/i18n/client";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { useListingParams } from "./useListingParams";
 import styles from "./SortSelect.module.css";
@@ -12,11 +13,12 @@ type SortSelectProps = {
 
 export function SortSelect({ options, value }: SortSelectProps) {
   const { setSort, isPending } = useListingParams();
+  const { listing } = useDictionary();
 
   return (
     <div className={styles.sort}>
       <label htmlFor="sort-by" className={styles.label}>
-        Sortieren nach
+        {listing.sortBy}
       </label>
       <div className={styles.selectWrapper}>
         <select

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useDictionary } from "@/i18n/client";
 import type { Filter } from "@/lib/shopify/types";
 import { MinusIcon, PlusIcon } from "@/components/ui/icons";
 import { useListingParams } from "./useListingParams";
@@ -16,18 +17,19 @@ type FilterSidebarProps = {
 /** Checkbox filters from the Storefront API (vendor, availability, product type, …). */
 export function FilterSidebar({ filters }: FilterSidebarProps) {
   const [isOpen, setOpen] = useState(true);
+  const { listing } = useDictionary();
   const { activeFilters, toggleFilter, clearFilters, isPending } = useListingParams();
 
   return (
     <aside className={styles.sidebar} aria-busy={isPending}>
       <div className={styles.header}>
-        <h2 className={styles.heading}>Filter</h2>
+        <h2 className={styles.heading}>{listing.filter}</h2>
         <button
           type="button"
           className={styles.toggle}
           aria-expanded={isOpen}
           aria-controls="filter-groups"
-          aria-label={isOpen ? "Filter ausblenden" : "Filter einblenden"}
+          aria-label={isOpen ? listing.hideFilters : listing.showFilters}
           onClick={() => setOpen(!isOpen)}
         >
           {isOpen ? <MinusIcon /> : <PlusIcon />}
@@ -63,6 +65,7 @@ type FilterGroupProps = {
 
 function FilterGroup({ filter, activeFilters, onToggle, showLabel }: FilterGroupProps) {
   const [isExpanded, setExpanded] = useState(false);
+  const { common } = useDictionary();
   const values = isExpanded ? filter.values : filter.values.slice(0, COLLAPSED_VALUE_COUNT);
 
   return (
@@ -86,7 +89,7 @@ function FilterGroup({ filter, activeFilters, onToggle, showLabel }: FilterGroup
       </ul>
       {filter.values.length > COLLAPSED_VALUE_COUNT && (
         <button type="button" className={styles.more} onClick={() => setExpanded(!isExpanded)}>
-          {isExpanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+          {isExpanded ? common.showLess : common.showMore}
         </button>
       )}
     </fieldset>
