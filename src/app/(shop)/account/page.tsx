@@ -8,6 +8,14 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { logout } from "./actions";
 import styles from "./account.module.css";
 
+const FULFILLMENT_STATUS_LABELS: Record<string, string> = {
+  UNFULFILLED: "In Bearbeitung",
+  IN_PROGRESS: "In Bearbeitung",
+  PARTIALLY_FULFILLED: "Teilweise versendet",
+  FULFILLED: "Versendet",
+  ON_HOLD: "Zurückgestellt",
+};
+
 export const metadata: Metadata = {
   title: "Mein Konto",
   robots: { index: false },
@@ -53,7 +61,9 @@ async function AccountOverview() {
                     <a href={order.statusUrl}>#{order.orderNumber}</a>
                   </td>
                   <td>{formatDate(order.processedAt)}</td>
-                  <td>{order.fulfillmentStatus}</td>
+                  <td>
+                    {FULFILLMENT_STATUS_LABELS[order.fulfillmentStatus] ?? order.fulfillmentStatus}
+                  </td>
                   <td>{formatMoney(order.totalPrice)}</td>
                 </tr>
               ))}

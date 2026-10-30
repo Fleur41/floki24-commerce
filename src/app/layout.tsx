@@ -6,9 +6,6 @@ import { getSessionCart } from "@/lib/cart-session";
 import { siteUrl } from "@/lib/site-url";
 import { CartNotification } from "@/components/cart/CartNotification";
 import { CartProvider } from "@/components/cart/CartProvider";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { TopBar } from "@/components/layout/TopBar";
 import "./globals.css";
 
 const nunitoSans = Nunito_Sans({
@@ -37,10 +34,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="de" className={`${nunitoSans.variable} ${montserrat.variable}`}>
       <body>
         <CartProvider cartPromise={cartPromise}>
-          <TopBar />
-          <Header />
-          <main id="main-content">{children}</main>
-          <Footer />
+          {/* Storefront chrome lives in (shop)/layout; checkout has its own. */}
+          {children}
           <CartNotification />
         </CartProvider>
       </body>

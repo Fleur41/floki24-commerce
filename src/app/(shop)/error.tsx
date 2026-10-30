@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import styles from "./not-found.module.css";
+import styles from "../not-found.module.css";
 
 export default function ErrorPage({ reset }: { error: Error; reset: () => void }) {
   return (
