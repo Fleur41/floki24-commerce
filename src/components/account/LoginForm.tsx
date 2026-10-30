@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { login, type AccountFormState } from "@/app/account/actions";
+import { login, type AccountFormState } from "@/app/(shop)/account/actions";
 import { Button } from "@/components/ui/Button";
 import styles from "./AccountForm.module.css";
 

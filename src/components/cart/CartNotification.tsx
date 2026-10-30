@@ -83,7 +83,9 @@ function NotificationContent({ line, onClose }: NotificationContentProps) {
             <ButtonLink href="/cart" variant="secondary" onClick={onClose}>
               Warenkorb anzeigen ({cart.totalQuantity})
             </ButtonLink>
-            <ButtonLink href={cart.checkoutUrl}>Kasse</ButtonLink>
+            <ButtonLink href={cart.checkoutUrl} onClick={onClose}>
+              Kasse
+            </ButtonLink>
           </div>
         </>
       )}

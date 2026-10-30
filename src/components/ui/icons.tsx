@@ -138,3 +138,40 @@ export function EnvelopeIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function BagIcon(props: IconProps) {
+  return (
+    <Icon width={24} height={24} viewBox="0 0 24 24" {...props}>
+      <path
+        d="M5 8h14l-1 13H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2"
+        stroke="currentColor"
+        strokeWidth={1.75}
+        strokeLinejoin="round"
+      />
+    </Icon>
+  );
+}
+
+export function HelpIcon(props: IconProps) {
+  return (
+    <Icon width={20} height={20} viewBox="0 0 20 20" {...props}>
+      <circle cx={10} cy={10} r={8.25} stroke="currentColor" strokeWidth={1.5} />
+      <path
+        d="M7.75 7.75a2.25 2.25 0 1 1 3.3 2c-.6.32-1.05.85-1.05 1.5v.5"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <circle cx={10} cy={14.25} r={0.9} fill="currentColor" />
+    </Icon>
+  );
+}
+
+export function LockIcon(props: IconProps) {
+  return (
+    <Icon width={18} height={18} viewBox="0 0 18 18" {...props}>
+      <rect x={3.5} y={8} width={11} height={8} rx={1.5} stroke="currentColor" strokeWidth={1.5} />
+      <path d="M6 8V5.5a3 3 0 0 1 6 0V8" stroke="currentColor" strokeWidth={1.5} />
+    </Icon>
+  );
+}

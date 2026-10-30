@@ -33,7 +33,11 @@ function applyQuantity(cart: Cart, { lineId, quantity }: OptimisticUpdate): Cart
     ...cart,
     lines,
     totalQuantity: lines.reduce((sum, line) => sum + line.quantity, 0),
-    cost: { subtotalAmount: { ...cart.cost.subtotalAmount, amount: String(subtotal) } },
+    cost: {
+      subtotalAmount: { ...cart.cost.subtotalAmount, amount: String(subtotal) },
+      // Discounts are recalculated by Shopify once the update settles.
+      totalAmount: { ...cart.cost.totalAmount, amount: String(subtotal) },
+    },
   };
 }
 
