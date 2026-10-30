@@ -1,3 +1,4 @@
+import { getDictionary } from "@/i18n/server";
 import type { Highlight } from "@/content/home";
 import styles from "./Highlights.module.css";
 
@@ -6,9 +7,10 @@ type HighlightsProps = {
 };
 
 /** USP strip below the slideshow ("Kostenloser Versand", …). */
-export function Highlights({ items }: HighlightsProps) {
+export async function Highlights({ items }: HighlightsProps) {
+  const { home } = await getDictionary();
   return (
-    <section className={styles.highlights} aria-label="Unsere Vorteile">
+    <section className={styles.highlights} aria-label={home.highlights}>
       <ul className={`container ${styles.list}`}>
         {items.map((item) => (
           <li key={item.title} className={styles.item}>

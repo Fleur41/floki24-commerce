@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary } from "@/i18n/server";
 import { getBlog } from "@/lib/shopify/content";
 import { ArticleCard } from "@/components/blog/ArticleCard";
 import { ChevronRightIcon } from "@/components/ui/icons";
@@ -13,7 +14,10 @@ type BlogPostsProps = {
 
 /** Latest articles of a blog. Renders nothing if the blog is missing or empty. */
 export async function BlogPosts({ title, blogHandle, articleCount }: BlogPostsProps) {
-  const blog = await getBlog(blogHandle, articleCount);
+  const [blog, { common }] = await Promise.all([
+    getBlog(blogHandle, articleCount),
+    getDictionary(),
+  ]);
   if (!blog?.articles.length) return null;
 
   return (
@@ -27,7 +31,7 @@ export async function BlogPosts({ title, blogHandle, articleCount }: BlogPostsPr
         ))}
       </ul>
       <Link href={`/blogs/${blog.handle}`} className={styles.more}>
-        Mehr anzeigen
+        {common.showMore}
         <ChevronRightIcon />
       </Link>
     </section>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getDictionary } from "@/i18n/server";
 import type { CategoryList as CategoryListContent } from "@/content/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -10,9 +11,10 @@ type CategoryListProps = {
 };
 
 /** Round category images with gold captions and a "Jetzt Entdecken" button. */
-export function CategoryList({ list }: CategoryListProps) {
+export async function CategoryList({ list }: CategoryListProps) {
+  const { home } = await getDictionary();
   return (
-    <section className={`container ${styles.section}`} aria-label={list.title ?? "Kategorien"}>
+    <section className={`container ${styles.section}`} aria-label={list.title ?? home.categories}>
       {list.title && <SectionHeading>{list.title}</SectionHeading>}
 
       <ul className={styles.list}>

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import type { Slide } from "@/content/home";
 import styles from "./Slideshow.module.css";
 
@@ -14,6 +16,7 @@ type SlideshowProps = {
 
 export function Slideshow({ slides }: SlideshowProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { home } = useDictionary();
   const [isPaused, setPaused] = useState(false);
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export function Slideshow({ slides }: SlideshowProps) {
     <section
       className={styles.slideshow}
       aria-roledescription="carousel"
-      aria-label="Highlights"
+      aria-label={home.slideshow}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -44,7 +47,7 @@ export function Slideshow({ slides }: SlideshowProps) {
             className={styles.slide}
             role="group"
             aria-roledescription="slide"
-            aria-label={`Folie ${index + 1} von ${slides.length}`}
+            aria-label={format(home.slideOf, { index: index + 1, total: slides.length })}
             inert={index !== activeIndex}
           >
             <Link href={slide.href} className={styles.media} tabIndex={-1} aria-hidden>
@@ -74,7 +77,7 @@ export function Slideshow({ slides }: SlideshowProps) {
             key={slide.href}
             type="button"
             className={styles.dot}
-            aria-label={`Folie ${index + 1}`}
+            aria-label={format(home.slide, { index: index + 1 })}
             aria-current={index === activeIndex}
             onClick={() => setActiveIndex(index)}
           />

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getDictionary } from "@/i18n/server";
 import { formatDate } from "@/lib/format";
 import type { Article } from "@/lib/shopify/types";
 import styles from "./ArticleCard.module.css";
@@ -8,7 +9,8 @@ type ArticleCardProps = {
   article: Article;
 };
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export async function ArticleCard({ article }: ArticleCardProps) {
+  const { common } = await getDictionary();
   const href = `/blogs/${article.blogHandle}/${article.handle}`;
 
   return (
@@ -34,7 +36,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         </h3>
         {article.excerpt && <p className={styles.excerpt}>{article.excerpt}</p>}
         <span className={styles.readMore} aria-hidden>
-          Jetzt lesen
+          {common.readNow}
         </span>
       </div>
     </article>
