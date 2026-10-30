@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary } from "@/i18n/server";
 import styles from "./Breadcrumbs.module.css";
 
 type BreadcrumbsProps = {
@@ -6,8 +7,9 @@ type BreadcrumbsProps = {
   items: { title: string; href?: string }[];
 };
 
-export function Breadcrumbs({ items }: BreadcrumbsProps) {
-  const trail = [{ title: "Home", href: "/" }, ...items];
+export async function Breadcrumbs({ items }: BreadcrumbsProps) {
+  const { common } = await getDictionary();
+  const trail = [{ title: common.home, href: "/" }, ...items];
 
   return (
     <nav aria-label="Breadcrumb" className={styles.breadcrumbs}>

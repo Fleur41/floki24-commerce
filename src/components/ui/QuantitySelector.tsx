@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { useDictionary } from "@/i18n/client";
 import { MinusIcon, PlusIcon } from "./icons";
 import styles from "./QuantitySelector.module.css";
 
@@ -23,6 +24,7 @@ export function QuantitySelector({
   disabled = false,
 }: QuantitySelectorProps) {
   const inputId = useId();
+  const { common } = useDictionary();
 
   const commit = (next: number) => {
     if (Number.isInteger(next) && next >= min) onChange(next);
@@ -39,7 +41,7 @@ export function QuantitySelector({
           className={styles.button}
           onClick={() => commit(value - 1)}
           disabled={disabled || value <= min}
-          aria-label="Menge verringern"
+          aria-label={common.decreaseQuantity}
         >
           <MinusIcon />
         </button>
@@ -58,7 +60,7 @@ export function QuantitySelector({
           className={styles.button}
           onClick={() => commit(value + 1)}
           disabled={disabled}
-          aria-label="Menge erhöhen"
+          aria-label={common.increaseQuantity}
         >
           <PlusIcon />
         </button>

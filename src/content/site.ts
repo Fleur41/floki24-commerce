@@ -15,6 +15,7 @@ export const site = {
   logo: shopFile("floki_gold_1.png"),
   swissFlag: shopFile("Schweizer_Flagge.png"),
   phone: { display: "071 511 98 64", href: "tel:+41715119864" },
+  whatsapp: { display: "+41 (0) 76 604 54 05", href: "https://wa.me/41766045405" },
   email: "info@floki24.ch",
   company: {
     name: "Schrader GmbH",
