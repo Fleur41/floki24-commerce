@@ -36,6 +36,7 @@ const de = {
     questions: "Fragen? 📞 Schneller Kundensupport |",
     swissCompany: "Schweizer Unternehmen",
     language: "Sprache",
+    label: "Service-Informationen",
   },
   header: {
     searchPlaceholder: "Wonach suchen Sie?",
@@ -50,6 +51,7 @@ const de = {
     showAll: "Alle anzeigen",
     search: "Suchen",
     allResults: "Alle Ergebnisse anzeigen",
+    cartWithOne: "Warenkorb, 1 Artikel",
   },
   footer: {
     mainMenu: "Hauptmenü",
@@ -66,6 +68,7 @@ const de = {
     country: "Land/Region",
     countryName: "Schweiz (CHF)",
     copyright: "Copyright © {year} floki24.",
+    menuLabel: "Hauptmenü (Fusszeile)",
   },
   newsletter: {
     email: "Email-Adresse",
@@ -119,6 +122,11 @@ const de = {
       "created-descending": "Datum, neu zu alt",
       relevance: "Relevanz",
     } as Record<string, string>,
+    availability: "Verfügbarkeit",
+    inStock: "Auf Lager",
+    outOfStock: "Nicht vorrätig",
+    productType: "Produktart",
+    vendor: "Marke",
   },
   search: {
     title: "Suche",
@@ -285,6 +293,7 @@ const de = {
       discountCheckFailed: "Der Rabattcode konnte nicht geprüft werden.",
       discountRemoveFailed: "Der Rabattcode konnte nicht entfernt werden.",
     },
+    subtotalOneItem: "Zwischensumme · 1 Artikel",
   },
   order: {
     title: "Bestellung #{number}",

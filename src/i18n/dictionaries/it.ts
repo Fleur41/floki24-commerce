@@ -33,6 +33,7 @@ const it: Dictionary = {
     questions: "Domande? 📞 Assistenza clienti rapida |",
     swissCompany: "Azienda svizzera",
     language: "Lingua",
+    label: "Informazioni di servizio",
   },
   header: {
     searchPlaceholder: "Cosa stai cercando?",
@@ -47,6 +48,7 @@ const it: Dictionary = {
     showAll: "Mostra tutto",
     search: "Cerca",
     allResults: "Mostra tutti i risultati",
+    cartWithOne: "Carrello, 1 articolo",
   },
   footer: {
     mainMenu: "Menu principale",
@@ -62,6 +64,7 @@ const it: Dictionary = {
     country: "Paese/regione",
     countryName: "Svizzera (CHF)",
     copyright: "Copyright © {year} floki24.",
+    menuLabel: "Menu principale (piè di pagina)",
   },
   newsletter: {
     email: "Indirizzo e-mail",
@@ -115,6 +118,11 @@ const it: Dictionary = {
       "created-descending": "Data, dal più recente",
       relevance: "Rilevanza",
     },
+    availability: "Disponibilità",
+    inStock: "Disponibile",
+    outOfStock: "Esaurito",
+    productType: "Tipo di prodotto",
+    vendor: "Marca",
   },
   search: {
     title: "Ricerca",
@@ -280,6 +288,7 @@ const it: Dictionary = {
       discountCheckFailed: "Non è stato possibile verificare il codice sconto.",
       discountRemoveFailed: "Non è stato possibile rimuovere il codice sconto.",
     },
+    subtotalOneItem: "Subtotale · 1 articolo",
   },
   order: {
     title: "Ordine n. {number}",
