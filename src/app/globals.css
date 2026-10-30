@@ -15,8 +15,9 @@
   --color-input-addon: #e6e6e6;
   --color-border: #dddddd;
   --color-border-light: #ebebeb;
-  --color-sale: #f04f36;
-  --color-in-stock: #3c9342;
+  /* A shade darker than the original shop, to meet WCAG AA text contrast on white. */
+  --color-sale: #d63b22;
+  --color-in-stock: #338139;
   --color-sold-out: #bf262f;
   --color-overlay: rgb(0 0 0 / 30%);
 

@@ -9,7 +9,12 @@ import styles from "./CartLink.module.css";
 
 function CartLinkView({ count }: { count: number }) {
   const { header } = useDictionary();
-  const label = count > 0 ? format(header.cartWithCount, { count }) : header.cart;
+  const label =
+    count === 0
+      ? header.cart
+      : count === 1
+        ? header.cartWithOne
+        : format(header.cartWithCount, { count });
 
   return (
     <Link href="/cart" className={styles.link} aria-label={label}>

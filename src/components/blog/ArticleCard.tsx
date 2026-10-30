@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getDictionary } from "@/i18n/server";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { formatDate } from "@/lib/format";
 import type { Article } from "@/lib/shopify/types";
 import styles from "./ArticleCard.module.css";
@@ -10,7 +10,7 @@ type ArticleCardProps = {
 };
 
 export async function ArticleCard({ article }: ArticleCardProps) {
-  const { common } = await getDictionary();
+  const [{ common }, locale] = await Promise.all([getDictionary(), getLocale()]);
   const href = `/blogs/${article.blogHandle}/${article.handle}`;
 
   return (
@@ -28,7 +28,7 @@ export async function ArticleCard({ article }: ArticleCardProps) {
       )}
       <div className={styles.body}>
         <p className={styles.meta}>
-          <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+          <time dateTime={article.publishedAt}>{formatDate(article.publishedAt, locale)}</time>
           {article.authorName && <span>{article.authorName}</span>}
         </p>
         <h3 className={styles.title}>

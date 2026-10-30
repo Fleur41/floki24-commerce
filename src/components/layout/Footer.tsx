@@ -32,10 +32,8 @@ export async function Footer() {
           </address>
         </section>
 
-        <nav aria-labelledby="footer-menu-title">
-          <h2 id="footer-menu-title" className={styles.title}>
-            {footer.mainMenu}
-          </h2>
+        <nav aria-label={footer.menuLabel}>
+          <h2 className={styles.title}>{footer.mainMenu}</h2>
           <ul className={styles.menu}>
             {localizeContent(footerMenu, locale).map((link) => (
               <li key={link.href}>

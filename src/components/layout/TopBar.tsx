@@ -10,7 +10,7 @@ export async function TopBar() {
   const [{ topBar }, locale] = await Promise.all([getDictionary(), getLocale()]);
 
   return (
-    <>
+    <aside aria-label={topBar.label}>
       <div className={`container ${styles.topBar}`}>
         <p>
           {topBar.questions}{" "}
@@ -28,6 +28,6 @@ export async function TopBar() {
         </div>
       </div>
       <p className={styles.announcement}>{translateContent(announcement, locale)}</p>
-    </>
+    </aside>
   );
 }

@@ -11,7 +11,8 @@ export async function Highlights({ items }: HighlightsProps) {
   const { home } = await getDictionary();
   return (
     <section className={styles.highlights} aria-label={home.highlights}>
-      <ul className={`container ${styles.list}`}>
+      {/* Scrolls sideways on phones; focusable so keyboard users can scroll it too. */}
+      <ul className={`container ${styles.list}`} tabIndex={0}>
         {items.map((item) => (
           <li key={item.title} className={styles.item}>
             {/* Tiny icons, partly local SVGs: next/image adds nothing here. */}

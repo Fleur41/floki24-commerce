@@ -116,7 +116,11 @@ export function CheckoutSummary({ cart, addressComplete, onCartChange }: Checkou
 
       <dl className={styles.totals} aria-busy={isPending}>
         <div>
-          <dt>{format(t.subtotalItems, { count: cart.totalQuantity })}</dt>
+          <dt>
+            {cart.totalQuantity === 1
+              ? t.subtotalOneItem
+              : format(t.subtotalItems, { count: cart.totalQuantity })}
+          </dt>
           <dd>{formatMoney(subtotal)}</dd>
         </div>
         {discount > 0 && (
