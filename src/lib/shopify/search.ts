@@ -1,8 +1,9 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
-import { storefront } from "./client";
+import { isMockShop, storefront } from "./client";
 import { FILTER_FRAGMENT, PAGE_INFO_FRAGMENT, PRODUCT_SUMMARY_FRAGMENT, gql } from "./fragments";
 import { paginationVariables, type ListingQuery } from "./listing";
+import { mockPredictiveSearch, mockSearchProducts } from "./mock-search";
 import { reshapeProductSummary, type RawProductSummary } from "./reshape";
 import type { Filter, PageInfo, PredictiveSearchResult, ProductListing } from "./types";
 
@@ -76,6 +77,8 @@ export async function searchProducts(
   cacheLife("minutes");
   cacheTag(cacheTags.products);
 
+  if (isMockShop) return mockSearchProducts(searchTerm, query);
+
   const data = await storefront<{
     search: {
       totalCount: number;
@@ -104,6 +107,8 @@ export async function predictiveSearch(searchTerm: string): Promise<PredictiveSe
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.products);
+
+  if (isMockShop) return mockPredictiveSearch(searchTerm);
 
   const data = await storefront<{
     predictiveSearch: { products: RawProductSummary[]; queries: { text: string }[] } | null;

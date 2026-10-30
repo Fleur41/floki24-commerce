@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
-import { storefront } from "./client";
+import { isMockShop, storefront } from "./client";
 import { PRODUCT_FRAGMENT, PRODUCT_SUMMARY_FRAGMENT, gql } from "./fragments";
 import {
   reshapeProduct,
@@ -8,6 +8,7 @@ import {
   type RawProduct,
   type RawProductSummary,
 } from "./reshape";
+import { mockProductTypes } from "./mock-search";
 import type { Product, ProductSummary } from "./types";
 
 const PRODUCT_QUERY = gql(
@@ -68,6 +69,8 @@ export async function getProductTypes(): Promise<string[]> {
   "use cache";
   cacheLife("days");
   cacheTag(cacheTags.products);
+
+  if (isMockShop) return mockProductTypes();
 
   const data = await storefront<{ productTypes: { nodes: string[] } }>(PRODUCT_TYPES_QUERY);
   return data.productTypes.nodes.filter(Boolean);
