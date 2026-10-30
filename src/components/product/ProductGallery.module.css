@@ -1,0 +1,55 @@
+.gallery {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 720px) {
+  .gallery {
+    position: sticky;
+    top: 12rem;
+  }
+}
+
+.main,
+.placeholder {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.placeholder {
+  background: var(--color-surface);
+}
+
+.mainImage {
+  object-fit: contain;
+}
+
+.thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.thumbnail {
+  position: relative;
+  display: block;
+  width: 4.375rem;
+  height: 4.375rem;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+
+.thumbnail[aria-current="true"] {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.thumbnailImage {
+  padding: 2px;
+  object-fit: cover;
+}

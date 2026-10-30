@@ -1,0 +1,208 @@
+/*
+ * Design tokens taken from the floki24.ch "Empire" theme settings.
+ * Component styles live next to their components as CSS Modules.
+ */
+:root {
+  --color-primary: #d4b654;
+  --color-primary-hover: #d8bd65;
+  --color-primary-active: #d0af44;
+  --color-primary-dark: #8b7223;
+  --color-text: #000;
+  --color-text-muted: #6b6b6b;
+  --color-background: #fff;
+  --color-surface: #f8f8f8;
+  --color-surface-warm: #f5f3ed;
+  --color-input-addon: #e6e6e6;
+  --color-border: #dddddd;
+  --color-border-light: #ebebeb;
+  --color-sale: #f04f36;
+  --color-in-stock: #3c9342;
+  --color-sold-out: #bf262f;
+  --color-overlay: rgb(0 0 0 / 30%);
+
+  --font-body: var(--font-nunito-sans), "Nunito Sans", sans-serif;
+  --font-heading: var(--font-montserrat), "Montserrat", sans-serif;
+
+  --font-size-body: 0.9375rem;
+  --font-size-small: 0.875rem;
+  --font-size-smallest: 0.8125rem;
+  --font-size-medium: 1.0546875rem;
+  --font-size-large: 1.171875rem;
+  --font-size-h1: 1.640625rem;
+  --font-size-h2: 1.5234375rem;
+  --font-size-h3: 1.40625rem;
+  --font-size-h4: 1.171875rem;
+  --font-size-h5: 1.0546875rem;
+  --font-size-section-heading: 1.171875rem;
+
+  --radius: 3px;
+  --shadow-header: 0 1px 4px rgb(128 128 128 / 25%);
+  --shadow-card-hover: 0 3px 8px rgb(0 0 0 / 10%);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --container-max-width: 1600px;
+  --container-gutter: 10px;
+}
+
+@media (min-width: 720px) {
+  :root {
+    --container-gutter: 15px;
+    --font-size-body: 1rem;
+    --font-size-h1: 1.75rem;
+    --font-size-h2: 1.625rem;
+    --font-size-h3: 1.5rem;
+    --font-size-h4: 1.25rem;
+    --font-size-h5: 1.125rem;
+    --font-size-section-heading: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-gutter: 25px;
+    --font-size-h1: 2.125rem;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: 2px;
+}
+
+/* Shared layout helpers */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  padding-inline: var(--container-gutter);
+  margin-inline: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Merchant-authored HTML (product descriptions, articles, pages) */
+
+.rte {
+  line-height: 1.625;
+  overflow-wrap: break-word;
+}
+
+.rte > * + * {
+  margin-top: 1em;
+}
+
+.rte h1,
+.rte h2,
+.rte h3,
+.rte h4 {
+  margin-top: 1.5em;
+}
+
+.rte img {
+  height: auto;
+}
+
+.rte a {
+  color: var(--color-primary);
+}
+
+.rte table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rte td,
+.rte th {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,5 @@
+.heading {
+  margin-bottom: 1.75rem;
+  font-size: var(--font-size-section-heading);
+  text-align: center;
+}

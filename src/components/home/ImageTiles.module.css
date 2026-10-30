@@ -1,0 +1,71 @@
+.tiles {
+  display: grid;
+  gap: 10px;
+}
+
+.mosaic {
+  margin-top: 1.75rem;
+}
+
+.grid {
+  margin-top: 3.125rem;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+}
+
+.tile::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(to bottom, rgb(0 0 0 / 35%), transparent 45%);
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+
+.tile:hover .image {
+  transform: scale(1.03);
+}
+
+.title {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  left: 1.25rem;
+  z-index: 1;
+  font-size: var(--font-size-h2);
+  line-height: 1.3;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 30%);
+}
+
+.mosaic .tile,
+.grid .tile {
+  aspect-ratio: 1.6;
+}
+
+@media (min-width: 720px) {
+  .mosaic {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .mosaic .tile {
+    aspect-ratio: auto;
+    min-height: 37.5rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .title {
+    font-size: 1.875rem;
+  }
+}

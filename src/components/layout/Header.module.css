@@ -1,0 +1,100 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-background);
+  box-shadow: var(--shadow-header);
+}
+
+/*
+ * Mobile: [menu + search toggle] [logo] [cart], search form on its own row.
+ * The outer columns share the free space equally so the logo stays centred.
+ */
+.bar {
+  display: grid;
+  grid-template-areas:
+    "start logo end"
+    "search search search";
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  padding-block: 10px;
+}
+
+.menuToggle {
+  grid-area: start;
+  justify-self: start;
+}
+
+.searchToggle {
+  grid-area: start;
+  justify-self: start;
+  /* Sits right of the menu toggle, which shares the same grid cell. */
+  margin-left: 2.75rem;
+}
+
+.logo {
+  grid-area: logo;
+  display: block;
+}
+
+.logo img {
+  width: 120px;
+  height: 48px;
+}
+
+.search {
+  grid-area: search;
+}
+
+.actions {
+  grid-area: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.account {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .bar {
+    grid-template-areas: "logo search end";
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 2.5rem;
+    padding-block: 20px 10px;
+  }
+
+  .menuToggle,
+  .searchToggle {
+    display: none;
+  }
+
+  .logo img {
+    width: 150px;
+    height: 60px;
+  }
+
+  .search {
+    justify-self: center;
+    width: 100%;
+    max-width: 34rem;
+  }
+
+  .actions {
+    gap: 1.5rem;
+  }
+
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .account:hover {
+    color: var(--color-primary);
+  }
+}

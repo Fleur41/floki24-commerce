@@ -1,0 +1,19 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.submit {
+  flex: 1;
+  min-width: 12rem;
+  height: 3.375rem;
+  padding-inline: 1rem;
+  white-space: nowrap;
+}
+
+.error {
+  margin-top: 0.75rem;
+  color: var(--color-sale);
+}

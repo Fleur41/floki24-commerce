@@ -1,0 +1,49 @@
+.skeleton {
+  display: grid;
+  gap: 2rem;
+  padding-top: 4.5rem;
+}
+
+@media (min-width: 720px) {
+  .skeleton {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.details {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+}
+
+.image,
+.title,
+.line,
+.button {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.image {
+  aspect-ratio: 1;
+}
+
+.title {
+  height: 4.5rem;
+}
+
+.line {
+  width: 40%;
+  height: 1.5rem;
+}
+
+.button {
+  height: 3.375rem;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

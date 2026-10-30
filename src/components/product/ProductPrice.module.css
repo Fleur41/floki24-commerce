@@ -1,0 +1,31 @@
+.price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--font-size-h4);
+  line-height: 1.15;
+}
+
+.badge {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.soldOut {
+  background: #000;
+}
+
+.sale {
+  background: var(--color-sale);
+}
+
+.compareAt {
+  color: var(--color-text-muted);
+}
+
+.salePrice {
+  color: var(--color-sale);
+}

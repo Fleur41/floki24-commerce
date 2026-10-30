@@ -1,0 +1,62 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition:
+    background-color 0.1s var(--ease),
+    border-color 0.1s var(--ease),
+    box-shadow 0.1s var(--ease);
+}
+
+.primary {
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+}
+
+.secondary {
+  color: var(--color-primary);
+  background-color: #fff;
+  border-color: var(--color-primary);
+}
+
+.secondary:hover:not(:disabled) {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.large {
+  padding: 0.875rem 1.5rem;
+  font-size: var(--font-size-medium);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.button:disabled {
+  color: #fff;
+  cursor: not-allowed;
+  background-color: #949494;
+  border-color: #949494;
+}

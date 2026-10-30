@@ -1,0 +1,131 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: 3rem;
+}
+
+.layout {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    gap: 3rem;
+  }
+}
+
+.lines {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.line {
+  display: grid;
+  grid-template-areas:
+    "image info"
+    "image quantity"
+    "image total";
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: 0.75rem 1.25rem;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 720px) {
+  .line {
+    grid-template-areas: "image info quantity total";
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto 7rem;
+    align-items: center;
+  }
+}
+
+.image {
+  position: relative;
+  grid-area: image;
+  aspect-ratio: 1;
+}
+
+.imageInner {
+  object-fit: contain;
+}
+
+.info {
+  grid-area: info;
+}
+
+.title {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.title:hover {
+  color: var(--color-primary);
+}
+
+.meta {
+  margin-top: 0.25rem;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  grid-area: quantity;
+}
+
+.remove {
+  padding: 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+}
+
+.total {
+  grid-area: total;
+  font-weight: 700;
+}
+
+@media (min-width: 720px) {
+  .total {
+    text-align: right;
+  }
+}
+
+.error {
+  margin-top: 1rem;
+  color: var(--color-sale);
+}
+
+.summary {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+}
+
+/* The subtotal is being recalculated after a quantity change. */
+.summary[aria-busy="true"] strong {
+  opacity: 0.5;
+}
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-large);
+}
+
+.note {
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}

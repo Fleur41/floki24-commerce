@@ -1,0 +1,42 @@
+.highlights {
+  background: var(--color-surface);
+}
+
+/* Mobile: horizontally scrollable strip; desktop: four equal columns. */
+.list {
+  display: grid;
+  grid-auto-columns: minmax(14rem, 1fr);
+  grid-auto-flow: column;
+  gap: 1.5rem;
+  padding-block: 2rem;
+  margin: 0;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  scroll-snap-align: start;
+}
+
+.icon {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h5);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+@media (min-width: 1024px) {
+  .list {
+    grid-auto-columns: 1fr;
+    overflow: visible;
+  }
+}

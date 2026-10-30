@@ -1,0 +1,14 @@
+.article {
+  max-width: 50rem;
+  margin-inline: auto;
+}
+
+.meta {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.image {
+  width: 100%;
+  margin-bottom: 2rem;
+}

@@ -1,0 +1,9 @@
+.actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.actions button {
+  padding-inline: 0.5rem;
+  font-size: var(--font-size-small);
+}

@@ -1,0 +1,46 @@
+.payments {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.paymentsTitle {
+  margin-bottom: 1rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+}
+
+.paymentIcons {
+  justify-content: center;
+}
+
+.notices {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  font-weight: 700;
+  background: var(--color-surface-warm);
+}
+
+.notice svg {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.description {
+  margin-top: 1rem;
+}
+
+.description h2,
+.description h3 {
+  font-size: var(--font-size-h2);
+}
