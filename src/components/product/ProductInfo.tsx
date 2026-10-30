@@ -1,4 +1,6 @@
 import { announcement } from "@/content/site";
+import { translateContent } from "@/content/translations";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { PaymentIcons } from "@/components/layout/PaymentIcons";
 import { EnvelopeIcon, PackageIcon } from "@/components/ui/icons";
 import styles from "./ProductInfo.module.css";
@@ -8,12 +10,14 @@ type ProductInfoProps = {
 };
 
 /** Trust block (payment methods, shipping, invoice) and the product description. */
-export function ProductInfo({ descriptionHtml }: ProductInfoProps) {
+export async function ProductInfo({ descriptionHtml }: ProductInfoProps) {
+  const [{ product: t }, locale] = await Promise.all([getDictionary(), getLocale()]);
+
   return (
     <>
       <section className={styles.payments} aria-labelledby="payment-methods-title">
         <h2 id="payment-methods-title" className={styles.paymentsTitle}>
-          Sichere Zahlungsmöglichkeiten
+          {t.securePayment}
         </h2>
         <PaymentIcons className={styles.paymentIcons} />
       </section>
@@ -21,11 +25,11 @@ export function ProductInfo({ descriptionHtml }: ProductInfoProps) {
       <ul className={styles.notices}>
         <li className={styles.notice}>
           <PackageIcon />
-          {announcement}
+          {translateContent(announcement, locale)}
         </li>
         <li className={styles.notice}>
           <EnvelopeIcon />
-          Kauf auf Rechnung
+          {t.invoice}
         </li>
       </ul>
 

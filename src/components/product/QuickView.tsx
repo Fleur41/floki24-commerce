@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useDictionary } from "@/i18n/client";
 import { hasSelectableOptions, resolveInitialVariant } from "@/lib/product";
 import type { Product } from "@/lib/shopify/types";
 import { CloseIcon } from "@/components/ui/icons";
@@ -24,6 +25,7 @@ type LoadState =
 export function QuickView({ handle, onClose }: QuickViewProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<LoadState>({ status: "loading" });
+  const { common, product: t } = useDictionary();
 
   useEffect(() => {
     dialogRef.current?.showModal();
@@ -43,18 +45,16 @@ export function QuickView({ handle, onClose }: QuickViewProps) {
     <dialog
       ref={dialogRef}
       className={styles.dialog}
-      aria-label="Schnellkauf"
+      aria-label={common.quickBuy}
       onClose={onClose}
       onClick={(event) => event.target === event.currentTarget && close()}
     >
-      <button type="button" className={styles.close} onClick={close} aria-label="Schliessen">
+      <button type="button" className={styles.close} onClick={close} aria-label={common.close}>
         <CloseIcon />
       </button>
 
-      {state.status === "loading" && <p className={styles.message}>Wird geladen …</p>}
-      {state.status === "error" && (
-        <p className={styles.message}>Das Produkt konnte nicht geladen werden.</p>
-      )}
+      {state.status === "loading" && <p className={styles.message}>{common.loading}</p>}
+      {state.status === "error" && <p className={styles.message}>{t.loadError}</p>}
       {state.status === "ready" && <QuickViewContent product={state.product} onAdded={close} />}
     </dialog>
   );
@@ -68,6 +68,7 @@ type QuickViewContentProps = {
 function QuickViewContent({ product, onAdded }: QuickViewContentProps) {
   const { variant, selectOption } = useVariantSelection(product, resolveInitialVariant(product));
   const image = variant.image ?? product.featuredImage;
+  const { product: t } = useDictionary();
 
   return (
     <div className={styles.content}>
@@ -91,7 +92,7 @@ function QuickViewContent({ product, onAdded }: QuickViewContentProps) {
         )}
         <AddToCartForm variant={variant} onAdded={onAdded} />
         <Link href={`/products/${product.handle}`} className={styles.detailsLink}>
-          Vollständige Details anzeigen
+          {t.fullDetails}
         </Link>
       </div>
     </div>

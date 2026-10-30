@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { format } from "@/i18n/config";
+import { getDictionary } from "@/i18n/server";
 import { discountPercentage, formatMoney } from "@/lib/format";
 import type { ProductSummary } from "@/lib/shopify/types";
 import { ProductCardActions } from "./ProductCardActions";
@@ -11,7 +13,8 @@ type ProductCardProps = {
   eager?: boolean;
 };
 
-export function ProductCard({ product, eager = false }: ProductCardProps) {
+export async function ProductCard({ product, eager = false }: ProductCardProps) {
+  const { common, product: t } = await getDictionary();
   const price = product.priceRange.minVariantPrice;
   const compareAtPrice = product.compareAtPriceRange.maxVariantPrice;
   const discount = discountPercentage(price, compareAtPrice);
@@ -31,10 +34,12 @@ export function ProductCard({ product, eager = false }: ProductCardProps) {
           />
         )}
         {!product.availableForSale ? (
-          <span className={`${styles.badge} ${styles.soldOutBadge}`}>Ausverkauft</span>
+          <span className={`${styles.badge} ${styles.soldOutBadge}`}>{common.soldOut}</span>
         ) : (
           discount && (
-            <span className={`${styles.badge} ${styles.saleBadge}`}>Sparen Sie {discount}%</span>
+            <span className={`${styles.badge} ${styles.saleBadge}`}>
+              {format(t.save, { discount })}
+            </span>
           )
         )}
       </div>
@@ -42,12 +47,12 @@ export function ProductCard({ product, eager = false }: ProductCardProps) {
       <div className={styles.price}>
         {discount && (
           <s className={styles.compareAt}>
-            <span className="visually-hidden">Ursprünglicher Preis</span>
+            <span className="visually-hidden">{t.originalPrice}</span>
             {formatMoney(compareAtPrice)}
           </s>
         )}
         <span className={discount ? styles.salePrice : styles.currentPrice}>
-          <span className="visually-hidden">Aktueller Preis</span>
+          <span className="visually-hidden">{t.currentPrice}</span>
           {formatMoney(price)}
         </span>
       </div>
@@ -57,7 +62,7 @@ export function ProductCard({ product, eager = false }: ProductCardProps) {
       </h3>
       <p className={styles.vendor}>{product.vendor}</p>
       <p className={product.availableForSale ? styles.inStock : styles.soldOut}>
-        {product.availableForSale ? "Auf Lager" : "Ausverkauft"}
+        {product.availableForSale ? common.inStock : common.soldOut}
       </p>
       {product.availableForSale && (
         <div className={styles.actions}>

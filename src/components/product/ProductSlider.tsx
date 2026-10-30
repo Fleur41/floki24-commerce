@@ -1,6 +1,7 @@
 "use client";
 
 import { Children, useRef, type ReactNode } from "react";
+import { useDictionary } from "@/i18n/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
 import styles from "./ProductSlider.module.css";
 
@@ -15,6 +16,7 @@ type ProductSliderProps = {
  */
 export function ProductSlider({ label, children }: ProductSliderProps) {
   const listRef = useRef<HTMLUListElement>(null);
+  const { common } = useDictionary();
 
   const scrollByPage = (direction: 1 | -1) => {
     const list = listRef.current;
@@ -32,7 +34,7 @@ export function ProductSlider({ label, children }: ProductSliderProps) {
         type="button"
         className={`${styles.arrow} ${styles.previous}`}
         onClick={() => scrollByPage(-1)}
-        aria-label="Zurück"
+        aria-label={common.back}
       >
         <ChevronLeftIcon />
       </button>
@@ -40,7 +42,7 @@ export function ProductSlider({ label, children }: ProductSliderProps) {
         type="button"
         className={`${styles.arrow} ${styles.next}`}
         onClick={() => scrollByPage(1)}
-        aria-label="Weiter"
+        aria-label={common.next}
       >
         <ChevronRightIcon />
       </button>

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { ProductSummary } from "@/lib/shopify/types";
+import { useDictionary } from "@/i18n/client";
 import { useCartActions } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/Button";
 import { QuickView } from "./QuickView";
@@ -14,6 +15,7 @@ type ProductCardActionsProps = {
 /** "Schnellkauf" and, for products without options, a direct add-to-cart button. */
 export function ProductCardActions({ product }: ProductCardActionsProps) {
   const { addItem } = useCartActions();
+  const { common } = useDictionary();
   const [isQuickViewOpen, setQuickViewOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -22,7 +24,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
   return (
     <div className={styles.actions}>
       <Button variant="secondary" fullWidth onClick={() => setQuickViewOpen(true)}>
-        Schnellkauf
+        {common.quickBuy}
       </Button>
       {singleVariantId && (
         <Button
@@ -31,7 +33,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
           aria-busy={isPending}
           onClick={() => startTransition(async () => void (await addItem(singleVariantId, 1)))}
         >
-          Zum Warenkorb hinzufügen
+          {common.addToCart}
         </Button>
       )}
       {isQuickViewOpen && (

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { format } from "@/i18n/config";
+import { useDictionary } from "@/i18n/client";
 import type { Image as ShopifyImage } from "@/lib/shopify/types";
 import styles from "./ProductGallery.module.css";
 
@@ -15,6 +17,7 @@ export function ProductGallery({
   onSelect,
   productTitle,
 }: ProductGalleryProps) {
+  const { product: t } = useDictionary();
   const activeImage = images[activeIndex];
   if (!activeImage) return <div className={styles.placeholder} />;
 
@@ -32,14 +35,14 @@ export function ProductGallery({
       </div>
 
       {images.length > 1 && (
-        <ul className={styles.thumbnails} aria-label="Produktbilder">
+        <ul className={styles.thumbnails} aria-label={t.images}>
           {images.map((image, index) => (
             <li key={image.url}>
               <button
                 type="button"
                 className={styles.thumbnail}
                 aria-current={index === activeIndex}
-                aria-label={`Bild ${index + 1} anzeigen`}
+                aria-label={format(t.showImage, { index: index + 1 })}
                 onClick={() => onSelect(index)}
               >
                 <Image src={image.url} alt="" fill sizes="80px" className={styles.thumbnailImage} />

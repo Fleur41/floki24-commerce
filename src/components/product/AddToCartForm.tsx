@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { ProductVariant } from "@/lib/shopify/types";
+import { useDictionary } from "@/i18n/client";
 import { useCartActions } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/Button";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
@@ -15,6 +16,7 @@ type AddToCartFormProps = {
 
 export function AddToCartForm({ variant, onAdded }: AddToCartFormProps) {
   const { addItem } = useCartActions();
+  const { common } = useDictionary();
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -33,7 +35,7 @@ export function AddToCartForm({ variant, onAdded }: AddToCartFormProps) {
     <div className={styles.form}>
       <div className={styles.row}>
         <QuantitySelector
-          label="Anzahl"
+          label={common.quantity}
           value={quantity}
           onChange={setQuantity}
           disabled={isSoldOut}
@@ -45,7 +47,7 @@ export function AddToCartForm({ variant, onAdded }: AddToCartFormProps) {
           disabled={isSoldOut || isPending}
           aria-busy={isPending}
         >
-          {buttonLabel(isSoldOut, isPending)}
+          {isSoldOut ? common.soldOut : isPending ? common.adding : common.addToCart}
         </Button>
       </div>
       {error && (
@@ -55,9 +57,4 @@ export function AddToCartForm({ variant, onAdded }: AddToCartFormProps) {
       )}
     </div>
   );
-}
-
-function buttonLabel(isSoldOut: boolean, isPending: boolean): string {
-  if (isSoldOut) return "Ausverkauft";
-  return isPending ? "Wird hinzugefügt …" : "Zum Warenkorb hinzufügen";
 }
