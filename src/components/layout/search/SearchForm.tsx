@@ -4,6 +4,7 @@ import Form from "next/form";
 import Image from "next/image";
 import Link from "next/link";
 import { useId, useRef, useState, type FocusEvent } from "react";
+import { useDictionary } from "@/i18n/client";
 import { formatMoney } from "@/lib/format";
 import { ChevronDownIcon, SearchIcon } from "@/components/ui/icons";
 import { usePredictiveSearch } from "./usePredictiveSearch";
@@ -21,6 +22,7 @@ type SearchFormProps = {
  * results. On small screens it collapses behind a toggle button.
  */
 export function SearchForm({ productTypes, className, toggleClassName }: SearchFormProps) {
+  const { header } = useDictionary();
   const [isOpenOnMobile, setOpenOnMobile] = useState(false);
   const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -47,7 +49,7 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
         type="button"
         className={`${styles.toggle} ${toggleClassName ?? ""}`}
         aria-expanded={isOpenOnMobile}
-        aria-label="Suche öffnen"
+        aria-label={header.openSearch}
         onClick={toggleMobileSearch}
       >
         <SearchIcon />
@@ -68,7 +70,7 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
               Kategorie
             </label>
             <select id={typeSelectId} name="type" defaultValue="">
-              <option value="">Alle Kategorien</option>
+              <option value="">{header.allCategories}</option>
               {productTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
@@ -84,8 +86,8 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
           className={styles.input}
           type="search"
           name="q"
-          placeholder="Wonach suchen Sie?"
-          aria-label="Wonach suchen Sie?"
+          placeholder={header.searchPlaceholder}
+          aria-label={header.searchPlaceholder}
           autoComplete="off"
           aria-controls={resultsId}
           value={query}
@@ -96,7 +98,7 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
           onFocus={() => setShowResults(true)}
         />
 
-        <button type="submit" className={styles.submit} aria-label="Suchen">
+        <button type="submit" className={styles.submit} aria-label={header.search}>
           <SearchIcon />
         </button>
 
@@ -127,7 +129,7 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
             ))}
           </ul>
           <button type="submit" className={styles.viewAll}>
-            Alle Ergebnisse anzeigen
+            {header.allResults}
           </button>
         </div>
       </Form>

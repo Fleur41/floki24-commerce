@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { MenuItem } from "@/content/types";
+import { useDictionary } from "@/i18n/client";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -19,6 +20,7 @@ type MobileMenuProps = {
 
 /** Off-canvas drill-down menu for small screens, built on the native <dialog>. */
 export function MobileMenu({ menu, className }: MobileMenuProps) {
+  const { header } = useDictionary();
   const dialogRef = useRef<HTMLDialogElement>(null);
   /** Path of opened submenus, e.g. [Garten & Terrasse, Gartenmöbel]. */
   const [trail, setTrail] = useState<MenuItem[]>([]);
@@ -41,13 +43,13 @@ export function MobileMenu({ menu, className }: MobileMenuProps) {
     <>
       <button type="button" className={`${styles.toggle} ${className ?? ""}`} onClick={open}>
         <MenuIcon />
-        <span className="visually-hidden">Menü</span>
+        <span className="visually-hidden">{header.menu}</span>
       </button>
 
       <dialog
         ref={dialogRef}
         className={styles.drawer}
-        aria-label="Menü"
+        aria-label={header.menu}
         onClick={(event) => event.target === event.currentTarget && close()}
       >
         <div className={styles.panel}>
@@ -62,13 +64,13 @@ export function MobileMenu({ menu, className }: MobileMenuProps) {
                 {current.title}
               </button>
             ) : (
-              <span className={styles.heading}>Menü</span>
+              <span className={styles.heading}>{header.menu}</span>
             )}
             <button
               type="button"
               className={styles.close}
               onClick={close}
-              aria-label="Menü schliessen"
+              aria-label={header.closeMenu}
             >
               <CloseIcon />
             </button>
@@ -78,7 +80,7 @@ export function MobileMenu({ menu, className }: MobileMenuProps) {
             {current?.href && (
               <li>
                 <Link href={current.href} className={styles.item} onClick={close}>
-                  Alle anzeigen
+                  {header.showAll}
                 </Link>
               </li>
             )}
@@ -109,7 +111,7 @@ export function MobileMenu({ menu, className }: MobileMenuProps) {
           {!current && (
             <Link href="/account" className={styles.account} onClick={close}>
               <UserIcon />
-              Anmelden
+              {header.login}
             </Link>
           )}
         </div>

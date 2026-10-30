@@ -1,14 +1,16 @@
+/* Field and button side by side; the status message wraps onto its own line. */
 .form {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
 .input {
-  width: 100%;
-  height: 3.125rem;
+  flex: 1 1 10rem;
+  min-width: 0;
+  /* Stretches to the button's height, so the two line up. */
+  min-height: 3.125rem;
   padding: 0 0.625rem;
   color: var(--color-text);
   background: #fff;
@@ -18,6 +20,11 @@
 
 .input::placeholder {
   color: var(--color-primary);
+}
+
+.success,
+.error {
+  flex-basis: 100%;
 }
 
 .success {

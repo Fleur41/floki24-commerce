@@ -1,3 +1,4 @@
+import { getDictionary } from "@/i18n/server";
 import { paymentMethods } from "@/content/site";
 import styles from "./PaymentIcons.module.css";
 
@@ -5,9 +6,10 @@ type PaymentIconsProps = {
   className?: string;
 };
 
-export function PaymentIcons({ className }: PaymentIconsProps) {
+export async function PaymentIcons({ className }: PaymentIconsProps) {
+  const { common } = await getDictionary();
   return (
-    <ul className={`${styles.icons} ${className ?? ""}`} aria-label="Zahlungsmethoden">
+    <ul className={`${styles.icons} ${className ?? ""}`} aria-label={common.paymentMethods}>
       {paymentMethods.map(({ id, label }) => (
         <li key={id}>
           {/* Static SVGs: next/image would only add a wrapper around them. */}

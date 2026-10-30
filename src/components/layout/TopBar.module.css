@@ -12,6 +12,13 @@
   text-decoration: none;
 }
 
+.end {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  align-items: center;
+}
+
 .badge {
   display: flex;
   flex-shrink: 0;

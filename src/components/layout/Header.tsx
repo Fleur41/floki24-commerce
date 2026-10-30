@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { mainMenu } from "@/content/navigation";
+import { localizeContent } from "@/content/translations";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { site } from "@/content/site";
 import { getProductTypes } from "@/lib/shopify/products";
 import { CartLink, CartLinkFallback } from "@/components/cart/CartLink";
@@ -12,12 +14,17 @@ import { SearchForm } from "./search/SearchForm";
 import styles from "./Header.module.css";
 
 export async function Header() {
-  const productTypes = await getProductTypes();
+  const [productTypes, { header }, locale] = await Promise.all([
+    getProductTypes(),
+    getDictionary(),
+    getLocale(),
+  ]);
+  const menu = localizeContent(mainMenu, locale);
 
   return (
     <header className={styles.header}>
       <div className={`container ${styles.bar}`}>
-        <MobileMenu menu={mainMenu} className={styles.menuToggle} />
+        <MobileMenu menu={menu} className={styles.menuToggle} />
 
         <Link href="/" className={styles.logo}>
           <Image src={site.logo} alt={site.name} width={150} height={60} loading="eager" />
@@ -32,7 +39,7 @@ export async function Header() {
         <div className={styles.actions}>
           <Link href="/account" className={styles.account}>
             <UserIcon />
-            <span className={styles.accountLabel}>Anmelden</span>
+            <span className={styles.accountLabel}>{header.login}</span>
           </Link>
           <Suspense fallback={<CartLinkFallback />}>
             <CartLink />
@@ -40,7 +47,7 @@ export async function Header() {
         </div>
       </div>
 
-      <MainNav menu={mainMenu} />
+      <MainNav menu={menu} />
     </header>
   );
 }

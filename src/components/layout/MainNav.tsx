@@ -3,30 +3,21 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { MenuItem } from "@/content/types";
+import { useDictionary } from "@/i18n/client";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import styles from "./MainNav.module.css";
-
-/** Delay before a hovered menu closes, so moving the pointer diagonally into the panel works. */
-const CLOSE_DELAY_MS = 150;
 
 type MainNavProps = {
   menu: MenuItem[];
 };
 
-/** Desktop navigation with full-width mega menu panels. */
+/** Desktop navigation with full-width mega menu panels that open on click. */
 export function MainNav({ menu }: MainNavProps) {
+  const { header } = useDictionary();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const navRef = useRef<HTMLElement>(null);
 
-  const open = (index: number) => {
-    clearTimeout(closeTimer.current);
-    setOpenIndex(index);
-  };
   const close = () => setOpenIndex(null);
-  const scheduleClose = () => {
-    closeTimer.current = setTimeout(close, CLOSE_DELAY_MS);
-  };
 
   useEffect(() => {
     if (openIndex === null) return;
@@ -43,10 +34,8 @@ export function MainNav({ menu }: MainNavProps) {
     };
   }, [openIndex]);
 
-  useEffect(() => () => clearTimeout(closeTimer.current), []);
-
   return (
-    <nav ref={navRef} className={styles.nav} aria-label="Hauptmenü" onMouseLeave={scheduleClose}>
+    <nav ref={navRef} className={styles.nav} aria-label={header.mainMenu}>
       <div className="container">
         <ul className={styles.list}>
           {menu.map((item, index) => {
@@ -54,13 +43,13 @@ export function MainNav({ menu }: MainNavProps) {
             const panelId = `mega-menu-${index}`;
 
             return (
-              <li key={item.title} onMouseEnter={() => open(index)}>
+              <li key={item.title}>
                 <button
                   type="button"
                   className={styles.trigger}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  onClick={() => (isOpen ? close() : open(index))}
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
                   {item.title}
                   <ChevronDownIcon className={styles.chevron} />
