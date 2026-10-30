@@ -22,3 +22,8 @@ export async function saveSessionCartId(cartId: string): Promise<void> {
     maxAge: CART_COOKIE_MAX_AGE,
   });
 }
+
+/** Forgets the cart, e.g. once it has been turned into an order. */
+export async function clearSessionCart(): Promise<void> {
+  (await cookies()).delete(CART_COOKIE);
+}

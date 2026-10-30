@@ -152,3 +152,13 @@ export async function getPolicy(handle: string): Promise<ShopPolicy | null> {
   const data = await storefront<{ shop: Record<string, ShopPolicy | null> }>(POLICIES_QUERY);
   return Object.values(data.shop).find((policy) => policy?.handle === handle) ?? null;
 }
+
+/** All published shop policies (terms, refunds, privacy, shipping), e.g. for the checkout. */
+export async function getPolicies(): Promise<ShopPolicy[]> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(cacheTags.content);
+
+  const data = await storefront<{ shop: Record<string, ShopPolicy | null> }>(POLICIES_QUERY);
+  return Object.values(data.shop).filter((policy): policy is ShopPolicy => policy !== null);
+}

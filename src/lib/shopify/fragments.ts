@@ -166,6 +166,13 @@ export const CART_FRAGMENT = fragment(
         subtotalAmount {
           ...Money
         }
+        totalAmount {
+          ...Money
+        }
+      }
+      discountCodes {
+        code
+        applicable
       }
       lines(first: 100) {
         nodes {

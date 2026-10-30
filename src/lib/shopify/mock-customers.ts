@@ -1,8 +1,8 @@
 import "server-only";
 import { createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { promisify } from "node:util";
+import { getMockCustomerOrders } from "./mock-orders";
+import { readMockStore, updateMockStore } from "./mock-store";
 import type { Customer, CustomerAccessToken } from "./types";
 
 /**
@@ -12,7 +12,7 @@ import type { Customer, CustomerAccessToken } from "./types";
  * the account pages to be exercised end to end during development.
  */
 
-const STORE_FILE = path.join(process.cwd(), ".data", "mock-customers.json");
+const STORE = "mock-customers";
 // Shopify issues customer access tokens that are valid for 30 days.
 const TOKEN_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -44,30 +44,6 @@ export class MockCustomerError extends Error {
   }
 }
 
-async function readStore(): Promise<StoredCustomer[]> {
-  try {
-    return JSON.parse(await readFile(STORE_FILE, "utf8")) as StoredCustomer[];
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
-    throw error;
-  }
-}
-
-// Writes are serialized so concurrent requests can't overwrite each other.
-let queue: Promise<unknown> = Promise.resolve();
-
-function updateStore<T>(update: (customers: StoredCustomer[]) => T | Promise<T>): Promise<T> {
-  const next = queue.then(async () => {
-    const customers = await readStore();
-    const result = await update(customers);
-    await mkdir(path.dirname(STORE_FILE), { recursive: true });
-    await writeFile(STORE_FILE, JSON.stringify(customers, null, 2));
-    return result;
-  });
-  queue = next.catch(() => {});
-  return next;
-}
-
 async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16);
   const hash = await scryptAsync(password, salt, 64);
@@ -94,7 +70,7 @@ export type MockCustomerInput = {
 export function createMockCustomer(input: MockCustomerInput): Promise<void> {
   const email = normalizeEmail(input.email);
 
-  return updateStore(async (customers) => {
+  return updateMockStore<StoredCustomer, void>(STORE, async (customers) => {
     if (customers.some((customer) => customer.email === email)) {
       throw new MockCustomerError("TAKEN", "Email has already been taken");
     }
@@ -114,7 +90,7 @@ export function createMockAccessToken(
   email: string,
   password: string,
 ): Promise<CustomerAccessToken> {
-  return updateStore(async (customers) => {
+  return updateMockStore(STORE, async (customers: StoredCustomer[]) => {
     const customer = customers.find((entry) => entry.email === normalizeEmail(email));
     if (!customer || !(await verifyPassword(password, customer.passwordHash))) {
       throw new MockCustomerError("UNIDENTIFIED_CUSTOMER", "Unidentified customer");
@@ -132,7 +108,7 @@ export function createMockAccessToken(
 export async function getMockCustomer(accessToken: string): Promise<Customer | null> {
   const tokenHash = hashToken(accessToken);
   const now = new Date().toISOString();
-  const customer = (await readStore()).find((entry) =>
+  const customer = (await readMockStore<StoredCustomer>(STORE)).find((entry) =>
     entry.tokens.some((token) => token.tokenHash === tokenHash && token.expiresAt > now),
   );
   if (!customer) return null;
@@ -143,13 +119,13 @@ export async function getMockCustomer(accessToken: string): Promise<Customer | n
     lastName: customer.lastName,
     email: customer.email,
     acceptsMarketing: customer.acceptsMarketing,
-    orders: [],
+    orders: await getMockCustomerOrders(customer.id),
   };
 }
 
 export function deleteMockAccessToken(accessToken: string): Promise<void> {
   const tokenHash = hashToken(accessToken);
-  return updateStore((customers) => {
+  return updateMockStore(STORE, (customers: StoredCustomer[]) => {
     for (const customer of customers) {
       customer.tokens = customer.tokens.filter((token) => token.tokenHash !== tokenHash);
     }

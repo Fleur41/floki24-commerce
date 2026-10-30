@@ -121,7 +121,8 @@ export type Cart = {
   id: string;
   checkoutUrl: string;
   totalQuantity: number;
-  cost: { subtotalAmount: Money };
+  cost: { subtotalAmount: Money; totalAmount: Money };
+  discountCodes: { code: string; applicable: boolean }[];
   lines: CartLine[];
 };
 
