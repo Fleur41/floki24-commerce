@@ -1,13 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { openProductInStock } from "./helpers";
 
 // Runs against the in-app demo checkout (no Shopify credentials configured).
 test("check out the cart and see the order confirmation", async ({ page }) => {
-  await page.goto("/collections/all");
-  const firstProduct = page.locator("article h3 a").first();
-  const title = (await firstProduct.textContent())!;
-  await firstProduct.click();
-
-  await page.getByRole("button", { name: "Zum Warenkorb hinzufügen" }).click();
+  const { title, addToCart } = await openProductInStock(page);
+  await addToCart.click();
   const notification = page.getByRole("dialog");
   await expect(notification).toContainText(/hinzugefügt/i);
   await notification.getByRole("link", { name: "Kasse" }).click();

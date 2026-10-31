@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openProductInStock } from "./helpers";
 
 const cartCount = (page: Page) => page.getByRole("link", { name: /Warenkorb/ }).first();
 
@@ -27,10 +28,8 @@ test("browse a collection, sort it and open a product", async ({ page }) => {
 });
 
 test("add to cart, change the quantity and remove the line", async ({ page }) => {
-  await page.goto("/collections/all");
-  await page.locator("article h3 a").first().click();
-
-  await page.getByRole("button", { name: "Zum Warenkorb hinzufügen" }).click();
+  const { addToCart } = await openProductInStock(page);
+  await addToCart.click();
   const notification = page.getByRole("dialog");
   await expect(notification).toContainText(/hinzugefügt/i);
   await notification.getByRole("link", { name: /Warenkorb/ }).click();
