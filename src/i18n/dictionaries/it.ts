@@ -132,6 +132,10 @@ const it: Dictionary = {
     activeFilters: "Filtri attivi",
     removeFilter: "Rimuovi filtro {label}",
     clearAll: "Rimuovi tutto",
+    priceFrom: "Da",
+    priceTo: "A",
+    applyPrice: "Applica",
+    price: "Prezzo",
   },
   search: {
     title: "Ricerca",

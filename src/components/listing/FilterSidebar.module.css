@@ -136,7 +136,7 @@
   padding: 0.0625rem 0.4375rem;
   font-size: var(--font-size-smallest);
   font-variant-numeric: tabular-nums;
-  color: #6b6b6b;
+  color: var(--color-text-muted);
   text-align: center;
   background: var(--color-input-addon);
   border-radius: 999px;
@@ -192,4 +192,70 @@
   color: var(--color-primary);
   background: none;
   border: 0;
+}
+
+/* Price range: two inputs side by side, the button below. */
+.price {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 0.75rem 0.5rem;
+  clear: both;
+}
+
+.priceField {
+  display: grid;
+  gap: 0.25rem;
+  font-size: var(--font-size-smallest);
+  color: var(--color-text-muted);
+}
+
+.priceInput {
+  width: 100%;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0 0.625rem;
+  font: inherit;
+  font-size: var(--font-size-small);
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  appearance: textfield;
+  transition: border-color 0.15s var(--ease);
+}
+
+.priceInput::-webkit-inner-spin-button,
+.priceInput::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.priceInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.priceDash {
+  padding-bottom: 0.625rem;
+  color: var(--color-text-muted);
+}
+
+.priceApply {
+  grid-column: 1 / -1;
+  height: 2.5rem;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  color: var(--color-primary);
+  background: #fff;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  transition:
+    background-color 0.15s var(--ease),
+    color 0.15s var(--ease);
+}
+
+.priceApply:hover {
+  color: #fff;
+  background: var(--color-primary);
 }

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { getDictionary } from "@/i18n/server";
 import { getSessionCart } from "@/lib/cart-session";
 import { getSessionCustomer } from "@/lib/customer-session";
-import { isMockShop } from "@/lib/shopify/client";
+import { usesDemoCheckout } from "@/lib/shopify/client";
 import { getPolicies } from "@/lib/shopify/content";
 import { site } from "@/content/site";
 import { Checkout } from "@/components/checkout/Checkout";
@@ -42,7 +42,7 @@ async function CheckoutContent() {
     );
   }
   // With a real store, Shopify's hosted checkout takes the payment.
-  if (!isMockShop) redirect(cart.checkoutUrl);
+  if (!usesDemoCheckout) redirect(cart.checkoutUrl);
 
   return (
     <Checkout

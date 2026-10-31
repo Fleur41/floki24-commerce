@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ProductListing } from "@/components/listing/ProductListing";
 import { ProductListingSkeleton } from "@/components/listing/ProductListingSkeleton";
 import styles from "./page.module.css";
+import { demoteHeadings } from "@/lib/html";
 
 /** Shopify's virtual collection containing every product. */
 const ALL_PRODUCTS_HANDLE = "all";
@@ -84,7 +85,7 @@ async function CollectionContent({
       {collection.descriptionHtml && (
         <div
           className={`rte ${styles.description}`}
-          dangerouslySetInnerHTML={{ __html: collection.descriptionHtml }}
+          dangerouslySetInnerHTML={{ __html: demoteHeadings(collection.descriptionHtml) }}
         />
       )}
       <ProductListing

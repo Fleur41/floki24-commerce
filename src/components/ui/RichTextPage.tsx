@@ -1,5 +1,6 @@
 import { PageHeader } from "./PageHeader";
 import styles from "./RichTextPage.module.css";
+import { demoteHeadings } from "@/lib/html";
 
 type RichTextPageProps = {
   title: string;
@@ -12,7 +13,7 @@ export function RichTextPage({ title, html }: RichTextPageProps) {
   return (
     <div className={styles.page}>
       <PageHeader title={title} />
-      <div className="rte" dangerouslySetInnerHTML={{ __html: html }} />
+      <div className="rte" dangerouslySetInnerHTML={{ __html: demoteHeadings(html) }} />
     </div>
   );
 }

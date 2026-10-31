@@ -4,6 +4,7 @@ import { getDictionary, getLocale } from "@/i18n/server";
 import { PaymentIcons } from "@/components/layout/PaymentIcons";
 import { EnvelopeIcon, PackageIcon } from "@/components/ui/icons";
 import styles from "./ProductInfo.module.css";
+import { demoteHeadings } from "@/lib/html";
 
 type ProductInfoProps = {
   descriptionHtml: string;
@@ -36,7 +37,7 @@ export async function ProductInfo({ descriptionHtml }: ProductInfoProps) {
       {descriptionHtml && (
         <div
           className={`rte ${styles.description}`}
-          dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          dangerouslySetInnerHTML={{ __html: demoteHeadings(descriptionHtml) }}
         />
       )}
     </>

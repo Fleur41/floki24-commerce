@@ -133,6 +133,10 @@ const fr: Dictionary = {
     activeFilters: "Filtres actifs",
     removeFilter: "Retirer le filtre {label}",
     clearAll: "Tout effacer",
+    priceFrom: "De",
+    priceTo: "À",
+    applyPrice: "Appliquer",
+    price: "Prix",
   },
   search: {
     title: "Recherche",

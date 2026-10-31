@@ -136,6 +136,10 @@ const de = {
     activeFilters: "Aktive Filter",
     removeFilter: "Filter {label} entfernen",
     clearAll: "Alle entfernen",
+    priceFrom: "Von",
+    priceTo: "Bis",
+    applyPrice: "Anwenden",
+    price: "Preis",
   },
   search: {
     title: "Suche",

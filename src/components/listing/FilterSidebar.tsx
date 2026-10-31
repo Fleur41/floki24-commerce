@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { format } from "@/i18n/config";
 import { useDictionary } from "@/i18n/client";
+import { parsePriceRange, type PriceRange } from "@/lib/shopify/listing";
 import type { Filter, FilterValue } from "@/lib/shopify/types";
 import { CloseIcon, MinusIcon, PlusIcon } from "@/components/ui/icons";
 import { useListingParams } from "./useListingParams";
@@ -19,9 +20,13 @@ type FilterSidebarProps = {
  * Options worth showing: values without products are dropped (unless selected).
  * Groups left with a single unselected option can't narrow anything down (e.g.
  * one brand for the whole collection), so they're hidden as long as another
- * group still offers a real choice.
+ * group (or the price range) still offers a real choice.
  */
-function useVisibleFilters(filters: Filter[], activeFilters: string[]): Filter[] {
+function visibleListFilters(
+  filters: Filter[],
+  activeFilters: string[],
+  hasPriceRange: boolean,
+): Filter[] {
   const withValues = filters
     .map((filter) => ({
       ...filter,
@@ -32,21 +37,34 @@ function useVisibleFilters(filters: Filter[], activeFilters: string[]): Filter[]
     .filter((filter) => filter.values.length > 0);
   const isChoice = (filter: Filter) =>
     filter.values.length > 1 || filter.values.some((value) => activeFilters.includes(value.input));
-  return withValues.some(isChoice) ? withValues.filter(isChoice) : withValues;
+  return hasPriceRange || withValues.some(isChoice) ? withValues.filter(isChoice) : withValues;
 }
 
-/** Checkbox filters from the Storefront API (vendor, availability, product type, …). */
+/** Filters from the Storefront API: checkbox lists (availability, brand, …) and the price range. */
 export function FilterSidebar({ filters }: FilterSidebarProps) {
   const [isOpen, setOpen] = useState(true);
   const { listing } = useDictionary();
-  const { activeFilters, toggleFilter, clearFilters, isPending } = useListingParams();
-  const visibleFilters = useVisibleFilters(filters, activeFilters);
+  const { activeFilters, toggleFilter, setPriceRange, clearFilters, isPending } =
+    useListingParams();
 
-  const activeValues = filters
+  const priceFilter = filters.find((filter) => filter.type === "PRICE_RANGE");
+  const listFilters = filters.filter((filter) => filter.type !== "PRICE_RANGE");
+  const visibleFilters = visibleListFilters(listFilters, activeFilters, Boolean(priceFilter));
+
+  const activePriceInput = activeFilters.find((filter) => parsePriceRange(filter) !== null);
+  const activePrice = activePriceInput ? parsePriceRange(activePriceInput) : null;
+  const priceBounds = priceFilter && parsePriceRange(priceFilter.values[0].input);
+
+  const activeChips = listFilters
     .flatMap((filter) => filter.values)
-    .filter((value) => activeFilters.includes(value.input));
+    .filter((value) => activeFilters.includes(value.input))
+    .map((value) => ({ id: value.id, label: value.label, input: value.input }));
+  if (activePriceInput && activePrice) {
+    const label = `${priceFilter?.label ?? listing.price}: ${activePrice.min ?? 0} – ${activePrice.max ?? priceBounds?.max ?? "∞"}`;
+    activeChips.push({ id: "price", label, input: activePriceInput });
+  }
 
-  if (visibleFilters.length === 0 && activeValues.length === 0) return null;
+  if (visibleFilters.length === 0 && !priceFilter && activeChips.length === 0) return null;
 
   return (
     <aside className={styles.sidebar} aria-busy={isPending}>
@@ -65,10 +83,10 @@ export function FilterSidebar({ filters }: FilterSidebarProps) {
       </div>
 
       <div id="filter-groups" hidden={!isOpen}>
-        {activeValues.length > 0 && (
+        {activeChips.length > 0 && (
           <div className={styles.active}>
             <ul className={styles.chips} aria-label={listing.activeFilters}>
-              {activeValues.map((value) => (
+              {activeChips.map((value) => (
                 <li key={value.id}>
                   <button
                     type="button"
@@ -96,6 +114,17 @@ export function FilterSidebar({ filters }: FilterSidebarProps) {
             onToggle={toggleFilter}
           />
         ))}
+
+        {priceFilter && (
+          <PriceRangeFilter
+            // Re-mounts with the URL's values when the range changes elsewhere (chip, "clear all").
+            key={activePriceInput ?? "none"}
+            label={priceFilter.label}
+            bounds={priceBounds ?? {}}
+            active={activePrice}
+            onApply={setPriceRange}
+          />
+        )}
       </div>
     </aside>
   );
@@ -157,5 +186,71 @@ function FilterOption({ value, checked, onToggle }: FilterOptionProps) {
         </span>
       </label>
     </li>
+  );
+}
+
+type PriceRangeFilterProps = {
+  label: string;
+  /** Lowest and highest price in the listing. */
+  bounds: PriceRange;
+  active: PriceRange | null;
+  onApply: (range: PriceRange) => void;
+};
+
+function toNumber(value: string): number | undefined {
+  const number = Number.parseFloat(value.replace(",", "."));
+  return Number.isFinite(number) && number >= 0 ? number : undefined;
+}
+
+/** "From / To" price inputs, applied with the button or Enter. */
+function PriceRangeFilter({ label, bounds, active, onApply }: PriceRangeFilterProps) {
+  const { listing } = useDictionary();
+  const [min, setMin] = useState(active?.min?.toString() ?? "");
+  const [max, setMax] = useState(active?.max?.toString() ?? "");
+
+  return (
+    <fieldset className={styles.group}>
+      <legend className={styles.legend}>{label}</legend>
+      <form
+        className={styles.price}
+        onSubmit={(event) => {
+          event.preventDefault();
+          onApply({ min: toNumber(min), max: toNumber(max) });
+        }}
+      >
+        <label className={styles.priceField}>
+          <span>{listing.priceFrom}</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step="any"
+            className={styles.priceInput}
+            placeholder={String(bounds.min ?? 0)}
+            value={min}
+            onChange={(event) => setMin(event.target.value)}
+          />
+        </label>
+        <span className={styles.priceDash} aria-hidden>
+          –
+        </span>
+        <label className={styles.priceField}>
+          <span>{listing.priceTo}</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step="any"
+            className={styles.priceInput}
+            placeholder={bounds.max !== undefined ? String(Math.ceil(bounds.max)) : ""}
+            value={max}
+            onChange={(event) => setMax(event.target.value)}
+          />
+        </label>
+        <button type="submit" className={styles.priceApply}>
+          {listing.applyPrice}
+        </button>
+      </form>
+    </fieldset>
   );
 }

@@ -1,6 +1,6 @@
 import { getDictionary } from "@/i18n/server";
 import type { SearchParams } from "@/lib/listing-params";
-import { getCheckboxFilters } from "@/lib/shopify/listing";
+import { getUsableFilters } from "@/lib/shopify/listing";
 import type { ProductListing as ProductListingData } from "@/lib/shopify/types";
 import { ProductCard } from "@/components/product/ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
@@ -26,7 +26,7 @@ export async function ProductListing({
   searchParams,
 }: ProductListingProps) {
   const { common, listing: t } = await getDictionary();
-  const filters = getCheckboxFilters(listing.filters);
+  const filters = getUsableFilters(listing.filters);
   const hasFilters = filters.length > 0;
 
   return (

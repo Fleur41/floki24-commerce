@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/format";
 import { getArticle } from "@/lib/shopify/content";
 import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
+import { demoteHeadings } from "@/lib/html";
 
 type ArticlePageProps = PageProps<"/[lang]/blogs/[blog]/[article]">;
 
@@ -61,7 +62,10 @@ async function ArticleContent({ params }: Pick<ArticlePageProps, "params">) {
           preload
         />
       )}
-      <div className="rte" dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
+      <div
+        className="rte"
+        dangerouslySetInnerHTML={{ __html: demoteHeadings(article.contentHtml) }}
+      />
     </article>
   );
 }

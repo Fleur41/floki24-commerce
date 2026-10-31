@@ -2,6 +2,7 @@
 
 import { useState, type Ref } from "react";
 import { useDictionary } from "@/i18n/client";
+import { demoteHeadings } from "@/lib/html";
 import type { ShopPolicy } from "@/lib/shopify/types";
 import { CloseIcon } from "@/components/ui/icons";
 import fieldStyles from "./fields.module.css";
@@ -57,7 +58,10 @@ export function TermsDialog({ ref, policies }: TermsDialogProps) {
               </label>
             </div>
             {policy && (
-              <div className={styles.policy} dangerouslySetInnerHTML={{ __html: policy.body }} />
+              <div
+                className={styles.policy}
+                dangerouslySetInnerHTML={{ __html: demoteHeadings(policy.body) }}
+              />
             )}
           </>
         )}

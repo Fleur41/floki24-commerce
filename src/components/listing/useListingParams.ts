@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useOptimistic, useTransition } from "react";
 import { listingParamNames } from "@/lib/listing-params";
+import { parsePriceRange, priceRangeInput, type PriceRange } from "@/lib/shopify/listing";
 
 /**
  * Updates sorting and filters in the URL. Any change starts again on the
@@ -32,6 +33,12 @@ export function useListingParams() {
     });
   };
 
+  const setFilters = (next: string[]) =>
+    navigate((params) => {
+      params.delete(listingParamNames.filter);
+      next.forEach((filter) => params.append(listingParamNames.filter, filter));
+    }, next);
+
   return {
     isPending,
     activeFilters,
@@ -41,10 +48,13 @@ export function useListingParams() {
       const next = activeFilters.includes(input)
         ? activeFilters.filter((filter) => filter !== input)
         : [...activeFilters, input];
-      navigate((params) => {
-        params.delete(listingParamNames.filter);
-        next.forEach((filter) => params.append(listingParamNames.filter, filter));
-      }, next);
+      setFilters(next);
+    },
+    /** Replaces the price filter; an open range on both ends removes it. */
+    setPriceRange: (range: PriceRange) => {
+      const input = priceRangeInput(range);
+      const others = activeFilters.filter((filter) => parsePriceRange(filter) === null);
+      setFilters(input ? [...others, input] : others);
     },
     clearFilters: () => navigate((params) => params.delete(listingParamNames.filter), []),
   };
