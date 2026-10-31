@@ -5,9 +5,13 @@
 **A fast, four-language headless storefront for [floki24.ch](https://floki24.ch), the Swiss
 shop for saunas, garden furniture, wellness and more.**
 
-Built with Next.js 16 · React 19 · TypeScript · Shopify Storefront API
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Shopify](https://img.shields.io/badge/Shopify-Storefront%20API-7AB55C?logo=shopify&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-tested-2EAD33?logo=playwright&logoColor=white)
 
-[Quick start](#-quick-start) · [Tour](#-a-quick-tour) · [Using the website](#-working-with-the-website) ·
+[Tech stack](#-tech-stack) · [Quick start](#-quick-start) · [Tour](#-a-quick-tour) · [Using the website](#-working-with-the-website) ·
 [Architecture](#-how-it-works) · [Development](#-development)
 
 <br>
@@ -35,6 +39,25 @@ Built with Next.js 16 · React 19 · TypeScript · Shopify Storefront API
 > public (tokenless) Storefront API. Browsing, search, filters and the cart are real. Because
 > it has no store token, it keeps customer accounts and orders **locally** and its checkout
 > **takes no payment**, so trying it never places a real order with floki24.
+
+---
+
+## 🧰 Tech stack
+
+| Area          | Technology                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework     | [Next.js 16](https://nextjs.org) (App Router, Cache Components, Partial Prerendering, Server Actions, `proxy.ts`)                           |
+| UI            | [React 19](https://react.dev) (Server Components, `useOptimistic`, `useTransition`, native `<dialog>`)                                      |
+| Language      | [TypeScript 5](https://www.typescriptlang.org) in strict mode, with generated route types (`PageProps`)                                     |
+| Styling       | CSS Modules and CSS custom properties (no CSS framework), Nunito Sans and Montserrat fonts                                                  |
+| Commerce data | [Shopify Storefront API](https://shopify.dev/docs/api/storefront) over GraphQL: products, collections, search, cart, blog, policies         |
+| Languages     | Built-in i18n: a locale cookie, `next/root-params`, typed dictionaries for DE / EN / FR / IT, and Shopify translations through `@inContext` |
+| Images        | `next/image` with a custom loader for the Shopify CDN                                                                                       |
+| Accounts      | Shopify customer accounts with a store token, otherwise local accounts (Node `crypto` scrypt) in a JSON file store                          |
+| Testing       | [Vitest](https://vitest.dev) unit tests, [Playwright](https://playwright.dev) end-to-end tests on desktop and mobile                        |
+| Code quality  | [ESLint 9](https://eslint.org) (`eslint-config-next`), [Prettier 3](https://prettier.io)                                                    |
+| CI            | GitHub Actions: formatting, lint, type check, unit tests, build and end-to-end tests                                                        |
+| Runtime       | Node.js 22 or newer; runs anywhere Next.js runs (e.g. Vercel or `npm start` on a server)                                                    |
 
 ---
 
@@ -340,7 +363,22 @@ to start fresh.
 - **404 status on streamed pages.** Product, collection and article pages stream, so a missing
   page is sent with status 200 plus `noindex`. Search engines still treat it as missing.
 
+---
+
+## 👥 Contributors
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Fleur41">
+        <img src="https://github.com/Fleur41.png?size=100" width="100" alt="Fleur41"><br>
+        <sub><b>Fleur41</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
 <div align="center">
 <br>
-Made for <a href="https://floki24.ch">floki24.ch</a> 🇨🇭
+Made for <a href="https://floki24.ch">floki24.ch</a> 🇨🇭 by <a href="https://github.com/Fleur41">Fleur41</a>
 </div>
