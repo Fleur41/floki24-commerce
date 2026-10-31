@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import { listingParamNames } from "@/lib/listing-params";
 
 /**
@@ -14,33 +14,38 @@ export function useListingParams() {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const navigate = (update: (params: URLSearchParams) => void) => {
+  // Checkboxes reflect a click immediately, before the new listing has loaded.
+  const [activeFilters, setOptimisticFilters] = useOptimistic(
+    searchParams.getAll(listingParamNames.filter),
+  );
+
+  const navigate = (update: (params: URLSearchParams) => void, nextFilters?: string[]) => {
     const params = new URLSearchParams(searchParams);
     params.delete(listingParamNames.after);
     params.delete(listingParamNames.before);
     update(params);
 
     const query = params.toString();
-    startTransition(() =>
-      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false }),
-    );
+    startTransition(() => {
+      if (nextFilters) setOptimisticFilters(nextFilters);
+      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    });
   };
-
-  const activeFilters = searchParams.getAll(listingParamNames.filter);
 
   return {
     isPending,
     activeFilters,
     sortValue: searchParams.get(listingParamNames.sort),
     setSort: (value: string) => navigate((params) => params.set(listingParamNames.sort, value)),
-    toggleFilter: (input: string) =>
+    toggleFilter: (input: string) => {
+      const next = activeFilters.includes(input)
+        ? activeFilters.filter((filter) => filter !== input)
+        : [...activeFilters, input];
       navigate((params) => {
-        const next = activeFilters.includes(input)
-          ? activeFilters.filter((filter) => filter !== input)
-          : [...activeFilters, input];
         params.delete(listingParamNames.filter);
         next.forEach((filter) => params.append(listingParamNames.filter, filter));
-      }),
-    clearFilters: () => navigate((params) => params.delete(listingParamNames.filter)),
+      }, next);
+    },
+    clearFilters: () => navigate((params) => params.delete(listingParamNames.filter), []),
   };
 }

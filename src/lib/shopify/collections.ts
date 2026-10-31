@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
-import { storefront } from "./client";
+import { isMockShop, storefront } from "./client";
 import {
   FILTER_FRAGMENT,
   IMAGE_FRAGMENT,
@@ -10,6 +10,7 @@ import {
   gql,
 } from "./fragments";
 import { paginationVariables, type ListingQuery } from "./listing";
+import { mockCatalogProducts, mockCollectionProducts } from "./mock-catalog";
 import { resolveCollectionHandle } from "./mock-shop";
 import { reshapeProductSummary, type RawProductSummary } from "./reshape";
 import type { Collection, Filter, PageInfo, ProductListing, ProductSummary } from "./types";
@@ -136,6 +137,8 @@ export async function getCollectionProducts(
   cacheLife("hours");
   cacheTag(cacheTags.collections, cacheTags.products);
 
+  if (isMockShop) return mockCollectionProducts(resolveCollectionHandle(handle), query);
+
   const data = await storefront<{
     collection: { products: ProductConnection & { filters: Filter[] } } | null;
   }>(COLLECTION_PRODUCTS_QUERY, {
@@ -157,6 +160,8 @@ export async function getCatalogProducts(query: ListingQuery<string>): Promise<P
   "use cache";
   cacheLife("hours");
   cacheTag(cacheTags.products);
+
+  if (isMockShop) return mockCatalogProducts(query);
 
   const data = await storefront<{ products: ProductConnection }>(CATALOG_PRODUCTS_QUERY, {
     sortKey: query.sortKey,

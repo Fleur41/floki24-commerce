@@ -133,3 +133,26 @@
     opacity: 1;
   }
 }
+
+/* List view (see ListingLayout): image on the left, details beside it. */
+@media (min-width: 720px) {
+  :global([data-view="list"]) .card {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    grid-auto-rows: min-content;
+    column-gap: 1.5rem;
+  }
+
+  :global([data-view="list"]) .media {
+    grid-row: 1 / span 6;
+  }
+
+  :global([data-view="list"]) .price {
+    margin-top: 0;
+  }
+
+  :global([data-view="list"]) .actions {
+    max-width: 22rem;
+    padding-top: 0.75rem;
+  }
+}

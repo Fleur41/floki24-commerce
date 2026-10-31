@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { useDictionary } from "@/i18n/client";
 import { hasSelectableOptions, resolveInitialVariant } from "@/lib/product";
 import type { Product, ProductVariant, SelectedOption } from "@/lib/shopify/types";
 import { AddToCartForm } from "./AddToCartForm";
@@ -21,6 +22,7 @@ type ProductViewProps = {
 /** Gallery and buy box. Owns the selected variant, which drives price, image and cart. */
 export function ProductView({ product, children }: ProductViewProps) {
   const searchParams = useSearchParams();
+  const { product: t } = useDictionary();
   const { variant, selectOption: selectVariantOption } = useVariantSelection(
     product,
     resolveInitialVariant(product, searchParams.get("variant")),
@@ -51,7 +53,7 @@ export function ProductView({ product, children }: ProductViewProps) {
         <h1 className={styles.title}>{product.title}</h1>
         {product.vendor && (
           <p className={styles.vendor}>
-            von{" "}
+            {t.by}{" "}
             <Link href={`/search?q=${encodeURIComponent(product.vendor)}`}>{product.vendor}</Link>
           </p>
         )}

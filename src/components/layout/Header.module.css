@@ -3,6 +3,11 @@
   top: 0;
   z-index: 100;
   background: var(--color-background);
+  transition: box-shadow 0.2s var(--ease);
+}
+
+/* The navigation below carries the shadow until it has scrolled away. */
+.header[data-compact="true"] {
   box-shadow: var(--shadow-header);
 }
 
@@ -60,13 +65,28 @@
 
 @media (min-width: 1024px) {
   .bar {
-    grid-template-areas: "logo search end";
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "menu logo search end";
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
     column-gap: 2.5rem;
     padding-block: 20px 10px;
   }
 
-  .menuToggle,
+  /* Once the navigation has scrolled away, a menu button takes its place. */
+  .menuToggle {
+    display: none;
+    grid-area: menu;
+  }
+
+  .header[data-compact="true"] .menuToggle {
+    display: grid;
+  }
+
+  /* Without it the empty column would still add a gap before the logo. */
+  .header:not([data-compact="true"]) .bar {
+    grid-template-areas: "logo search end";
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
   .searchToggle {
     display: none;
   }
@@ -76,10 +96,10 @@
     height: 60px;
   }
 
+  /* Fills the space between logo and account, like the reference shop. */
   .search {
-    justify-self: center;
     width: 100%;
-    max-width: 34rem;
+    margin-right: 2.5rem;
   }
 
   .actions {

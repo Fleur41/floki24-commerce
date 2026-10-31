@@ -17,14 +17,31 @@ import type {
 } from "./types";
 
 /**
- * Search for the mock.shop demo catalog. Its own search ignores the vendor and
- * returns many unrelated products, so the (small) catalog is loaded once and
- * searched here instead. A real store keeps using Shopify's search.
+ * Listings for the mock.shop demo catalog. Its search ignores the vendor and
+ * returns many unrelated products, and it has no filters at all, so the (small)
+ * catalog is loaded once and searched, filtered, sorted and paginated here.
+ * A real store keeps using Shopify's search and filters.
  */
+
+const COLLECTION_PRODUCT_IDS_QUERY = gql(/* GraphQL */ `
+  query MockCollectionProductIds($handle: String!, $after: String) {
+    collection(handle: $handle) {
+      products(first: 250, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          id
+        }
+      }
+    }
+  }
+`);
 
 const CATALOG_QUERY = gql(
   /* GraphQL */ `
-    query MockSearchCatalog($after: String) {
+    query MockCatalog($after: String) {
       products(first: 250, after: $after) {
         pageInfo {
           hasNextPage
@@ -70,7 +87,37 @@ async function getCatalog(): Promise<CatalogProduct[]> {
   return products;
 }
 
+/** Collection order (Shopify's "Ausgewählt"), or null when the collection doesn't exist. */
+async function getCollectionProductIds(handle: string): Promise<string[] | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(cacheTags.collections, cacheTags.products);
+
+  const ids: string[] = [];
+  let after: string | null = null;
+  for (let page = 0; page < MAX_CATALOG_PAGES; page++) {
+    const data: {
+      collection: {
+        products: {
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string }[];
+        };
+      } | null;
+    } = await storefront(COLLECTION_PRODUCT_IDS_QUERY, { handle, after });
+    if (!data.collection) return null;
+    ids.push(...data.collection.products.nodes.map((node) => node.id));
+    if (!data.collection.products.pageInfo.hasNextPage) break;
+    after = data.collection.products.pageInfo.endCursor;
+  }
+  return ids;
+}
+
+/** `score` orders the default sort: search relevance, or the original list order. */
 type Match = { product: CatalogProduct; score: number };
+
+/** Keeps the given order as the default ("featured"/"best selling") sort. */
+const inListOrder = (products: CatalogProduct[]): Match[] =>
+  products.map((product, index) => ({ product, score: -index }));
 
 async function findMatches(searchTerm: string): Promise<Match[]> {
   const catalog = await getCatalog();
@@ -99,14 +146,14 @@ function applyFilters(matches: Match[], filters: ProductFilterInput[]): Match[] 
   );
 }
 
+/** PRICE and TITLE sort by those fields; every other key keeps the default order. */
 function sortMatches(matches: Match[], sortKey: string, reverse: boolean): Match[] {
   const price = ({ product }: Match) => Number(product.priceRange.minVariantPrice.amount);
-  const sorted =
-    sortKey === "PRICE"
-      ? [...matches].sort((a, b) => price(a) - price(b))
-      : [...matches].sort(
-          (a, b) => b.score - a.score || a.product.title.localeCompare(b.product.title),
-        );
+  const sorted = [...matches].sort((a, b) => {
+    if (sortKey === "PRICE") return price(a) - price(b);
+    if (sortKey === "TITLE") return a.product.title.localeCompare(b.product.title);
+    return b.score - a.score || a.product.title.localeCompare(b.product.title);
+  });
   return reverse ? sorted.reverse() : sorted;
 }
 
@@ -189,11 +236,11 @@ async function buildFilters(matches: Match[]): Promise<Filter[]> {
   ].filter((filter): filter is Filter => filter !== null);
 }
 
-export async function mockSearchProducts(
-  searchTerm: string,
+/** One page of `matches` after the query's filters and sort, plus the filter options. */
+async function toListing(
+  matches: Match[],
   query: ListingQuery<string>,
 ): Promise<ProductListing & { totalCount: number }> {
-  const matches = await findMatches(searchTerm);
   const filtered = sortMatches(applyFilters(matches, query.filters), query.sortKey, query.reverse);
   const { items, pageInfo } = paginate(filtered, query);
 
@@ -203,6 +250,26 @@ export async function mockSearchProducts(
     pageInfo,
     totalCount: filtered.length,
   };
+}
+
+export async function mockSearchProducts(searchTerm: string, query: ListingQuery<string>) {
+  return toListing(await findMatches(searchTerm), query);
+}
+
+export async function mockCollectionProducts(
+  handle: string,
+  query: ListingQuery<string>,
+): Promise<ProductListing | null> {
+  const [ids, catalog] = await Promise.all([getCollectionProductIds(handle), getCatalog()]);
+  if (!ids) return null;
+
+  const byId = new Map(catalog.map((product) => [product.id, product]));
+  const products = ids.flatMap((id) => byId.get(id) ?? []);
+  return toListing(inListOrder(products), query);
+}
+
+export async function mockCatalogProducts(query: ListingQuery<string>): Promise<ProductListing> {
+  return toListing(inListOrder(await getCatalog()), query);
 }
 
 /** mock.shop's `productTypes` query returns nothing, so the types are read from the catalog. */

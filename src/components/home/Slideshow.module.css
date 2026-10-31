@@ -140,3 +140,43 @@
     background: #fff;
   }
 }
+
+/* Previous/next arrows at the image edges; desktop only, phones use the dots. */
+.arrow {
+  position: absolute;
+  top: calc(100vw / 2.05 / 2);
+  display: none;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  padding: 0;
+  color: #fff;
+  background: none;
+  border: 0;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 40%));
+  transform: translateY(-50%);
+  transition: opacity 0.2s var(--ease);
+}
+
+.arrow:hover {
+  opacity: 0.75;
+}
+
+.arrow svg {
+  width: 0.875rem;
+  height: auto;
+}
+
+.previous {
+  left: 1rem;
+}
+
+.next {
+  right: 1rem;
+}
+
+@media (min-width: 720px) {
+  .arrow {
+    display: grid;
+  }
+}

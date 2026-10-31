@@ -71,6 +71,8 @@ export function SearchForm({ productTypes, className, toggleClassName }: SearchF
             </label>
             <select id={typeSelectId} name="type" defaultValue="">
               <option value="">{header.allCategories}</option>
+              {/* Divider, as in the reference shop. */}
+              <option disabled>------</option>
               {productTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}

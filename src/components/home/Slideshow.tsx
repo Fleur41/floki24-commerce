@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { format } from "@/i18n/config";
 import { useDictionary } from "@/i18n/client";
 import type { Slide } from "@/content/home";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
 import styles from "./Slideshow.module.css";
 
 const AUTOPLAY_INTERVAL_MS = 5000;
@@ -70,6 +71,27 @@ export function Slideshow({ slides }: SlideshowProps) {
           </div>
         ))}
       </div>
+
+      {slides.length > 1 && (
+        <>
+          <button
+            type="button"
+            className={`${styles.arrow} ${styles.previous}`}
+            aria-label={home.previousSlide}
+            onClick={() => setActiveIndex((activeIndex - 1 + slides.length) % slides.length)}
+          >
+            <ChevronLeftIcon />
+          </button>
+          <button
+            type="button"
+            className={`${styles.arrow} ${styles.next}`}
+            aria-label={home.nextSlide}
+            onClick={() => setActiveIndex((activeIndex + 1) % slides.length)}
+          >
+            <ChevronRightIcon />
+          </button>
+        </>
+      )}
 
       <div className={styles.dots}>
         {slides.map((slide, index) => (

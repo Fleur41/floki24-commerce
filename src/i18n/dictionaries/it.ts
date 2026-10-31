@@ -81,6 +81,8 @@ const it: Dictionary = {
     categories: "Categorie",
     featuredCategories: "Categorie consigliate",
     moreCategories: "Altre categorie",
+    previousSlide: "Diapositiva precedente",
+    nextSlide: "Diapositiva successiva",
   },
   product: {
     save: "Risparmia il {discount}%",
@@ -94,6 +96,7 @@ const it: Dictionary = {
     fullDetails: "Mostra tutti i dettagli",
     images: "Immagini del prodotto",
     loading: "Caricamento del prodotto",
+    by: "di",
   },
   listing: {
     allProducts: "Tutti i prodotti",
@@ -123,6 +126,12 @@ const it: Dictionary = {
     outOfStock: "Esaurito",
     productType: "Tipo di prodotto",
     vendor: "Marca",
+    viewAs: "Visualizza come",
+    gridView: "Griglia",
+    listView: "Elenco",
+    activeFilters: "Filtri attivi",
+    removeFilter: "Rimuovi filtro {label}",
+    clearAll: "Rimuovi tutto",
   },
   search: {
     title: "Ricerca",

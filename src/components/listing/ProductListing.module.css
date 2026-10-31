@@ -5,15 +5,51 @@
 
 @media (min-width: 1024px) {
   .withSidebar {
-    grid-template-columns: 11.5rem minmax(0, 1fr);
+    grid-template-columns: 15rem minmax(0, 1fr);
     gap: 1.5rem;
   }
 }
 
 .toolbar {
   display: flex;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.25rem;
+}
+
+.viewAs {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 700;
+}
+
+.viewAs > span {
+  margin-right: 0.5rem;
+}
+
+@media (min-width: 720px) {
+  .viewAs {
+    display: flex;
+  }
+}
+
+.viewButton {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+  color: var(--color-text);
+  background: none;
+  border: 0;
+}
+
+.viewButton:hover,
+.viewButton[aria-pressed="true"] {
+  color: var(--color-primary);
 }
 
 .grid {
@@ -40,4 +76,11 @@
 .empty {
   padding-block: 3rem;
   text-align: center;
+}
+
+/* "View as: list" — one product per row; the cards switch layout too. */
+@media (min-width: 720px) {
+  [data-view="list"] .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

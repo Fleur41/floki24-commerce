@@ -85,6 +85,8 @@ const de = {
     categories: "Kategorien",
     featuredCategories: "Empfohlene Kategorien",
     moreCategories: "Weitere Kategorien",
+    previousSlide: "Vorherige Folie",
+    nextSlide: "Nächste Folie",
   },
   product: {
     save: "Sparen Sie {discount}%",
@@ -98,6 +100,7 @@ const de = {
     fullDetails: "Vollständige Details anzeigen",
     images: "Produktbilder",
     loading: "Produkt wird geladen",
+    by: "von",
   },
   listing: {
     allProducts: "Alle Produkte",
@@ -127,6 +130,12 @@ const de = {
     outOfStock: "Nicht vorrätig",
     productType: "Produktart",
     vendor: "Marke",
+    viewAs: "Ansicht als",
+    gridView: "Raster",
+    listView: "Liste",
+    activeFilters: "Aktive Filter",
+    removeFilter: "Filter {label} entfernen",
+    clearAll: "Alle entfernen",
   },
   search: {
     title: "Suche",

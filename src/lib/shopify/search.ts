@@ -3,7 +3,7 @@ import { cacheTags } from "./cache";
 import { isMockShop, storefront } from "./client";
 import { FILTER_FRAGMENT, PAGE_INFO_FRAGMENT, PRODUCT_SUMMARY_FRAGMENT, gql } from "./fragments";
 import { paginationVariables, type ListingQuery } from "./listing";
-import { mockPredictiveSearch, mockSearchProducts } from "./mock-search";
+import { mockPredictiveSearch, mockSearchProducts } from "./mock-catalog";
 import { reshapeProductSummary, type RawProductSummary } from "./reshape";
 import type { Filter, PageInfo, PredictiveSearchResult, ProductListing } from "./types";
 

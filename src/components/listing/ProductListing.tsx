@@ -4,6 +4,7 @@ import { getCheckboxFilters } from "@/lib/shopify/listing";
 import type { ProductListing as ProductListingData } from "@/lib/shopify/types";
 import { ProductCard } from "@/components/product/ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
+import { ListingLayout } from "./ListingLayout";
 import { Pagination } from "./Pagination";
 import { SortSelect } from "./SortSelect";
 import styles from "./ProductListing.module.css";
@@ -33,28 +34,30 @@ export async function ProductListing({
       {hasFilters && <FilterSidebar filters={filters} />}
 
       <div>
-        <div className={styles.toolbar}>
-          <SortSelect
-            options={sortOptions.map((option) => ({
-              ...option,
-              label: t.sort[option.value as keyof typeof t.sort] ?? option.label,
-            }))}
-            value={sortValue}
-          />
-        </div>
-
-        <h2 className="visually-hidden">{common.products}</h2>
-        {listing.products.length ? (
-          <ul className={styles.grid}>
-            {listing.products.map((product, index) => (
-              <li key={product.id}>
-                <ProductCard product={product} eager={index < 4} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className={styles.empty}>{t.noProducts}</p>
-        )}
+        <ListingLayout
+          sort={
+            <SortSelect
+              options={sortOptions.map((option) => ({
+                ...option,
+                label: t.sort[option.value as keyof typeof t.sort] ?? option.label,
+              }))}
+              value={sortValue}
+            />
+          }
+        >
+          <h2 className="visually-hidden">{common.products}</h2>
+          {listing.products.length ? (
+            <ul className={styles.grid}>
+              {listing.products.map((product, index) => (
+                <li key={product.id}>
+                  <ProductCard product={product} eager={index < 4} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.empty}>{t.noProducts}</p>
+          )}
+        </ListingLayout>
 
         <Pagination pathname={pathname} searchParams={searchParams} pageInfo={listing.pageInfo} />
       </div>

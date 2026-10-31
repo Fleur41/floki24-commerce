@@ -1,6 +1,6 @@
 .sidebar {
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  align-self: start;
+  transition: opacity 0.15s var(--ease);
 }
 
 .sidebar[aria-busy="true"] {
@@ -12,7 +12,6 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.75rem;
-  margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -28,55 +27,168 @@
   height: 2rem;
   place-items: center;
   padding: 0;
+  margin-right: -0.5rem;
   background: none;
   border: 0;
 }
 
+/* Selected filters as removable chips. */
+.active {
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.375rem 0.625rem;
+  font-size: var(--font-size-small);
+  line-height: 1.2;
+  text-align: left;
+  background: var(--color-input-addon);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition: border-color 0.15s var(--ease);
+}
+
+.chip:hover {
+  border-color: var(--color-primary);
+}
+
+.chip svg {
+  flex-shrink: 0;
+}
+
 .clear {
   padding: 0;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-small);
+  font-weight: 700;
   color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
   background: none;
   border: 0;
 }
 
 .group {
   min-width: 0;
-  padding: 0;
-  margin: 0 0 1rem;
+  padding: 1.125rem 0;
+  margin: 0;
   border: 0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .legend {
-  margin-bottom: 0.5rem;
+  padding: 0;
+  float: left; /* lets the legend take part in the padding box like a heading */
+  width: 100%;
+  margin-bottom: 0.75rem;
+  font-size: var(--font-size-small);
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .values {
   display: grid;
-  gap: 0.625rem;
+  clear: both;
+  gap: 0.25rem;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
+/* Checkbox · label (wraps) · count, with the checkbox aligned to the first line. */
 .value {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.625rem;
+  padding: 0.3125rem 0.375rem;
+  margin-inline: -0.375rem;
+  line-height: 1.35;
   cursor: pointer;
+  border-radius: var(--radius);
+  transition: background-color 0.15s var(--ease);
 }
 
+.value:hover {
+  background: var(--color-input-addon);
+}
+
+.label {
+  overflow-wrap: anywhere;
+}
+
+.count {
+  min-width: 1.75rem;
+  padding: 0.0625rem 0.4375rem;
+  font-size: var(--font-size-smallest);
+  font-variant-numeric: tabular-nums;
+  color: #6b6b6b;
+  text-align: center;
+  background: var(--color-input-addon);
+  border-radius: 999px;
+}
+
+/* Custom checkbox in the brand colour; the tick is drawn with a rotated border. */
 .checkbox {
-  width: 1rem;
-  height: 1rem;
-  margin: 0;
-  accent-color: var(--color-primary);
+  display: grid;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0.0625rem 0 0;
+  place-content: center;
+  cursor: pointer;
+  background: #fff;
+  border: 1.5px solid #9a9a9a;
+  border-radius: 3px;
+  appearance: none;
+  transition:
+    background-color 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+
+.checkbox::after {
+  width: 0.3125rem;
+  height: 0.5625rem;
+  margin-top: -0.125rem;
+  content: "";
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s var(--ease);
+}
+
+.checkbox:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox:checked::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.value:hover .checkbox:not(:checked) {
+  border-color: var(--color-primary);
 }
 
 .more {
   padding: 0;
-  margin-top: 0.75rem;
+  margin-top: 0.625rem;
+  font-size: var(--font-size-small);
+  font-weight: 700;
   color: var(--color-primary);
   background: none;
   border: 0;

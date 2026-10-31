@@ -8,7 +8,7 @@ import {
   type RawProduct,
   type RawProductSummary,
 } from "./reshape";
-import { mockProductTypes } from "./mock-search";
+import { mockProductTypes } from "./mock-catalog";
 import type { Product, ProductSummary } from "./types";
 
 const PRODUCT_QUERY = gql(

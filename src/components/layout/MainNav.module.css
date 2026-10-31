@@ -5,7 +5,11 @@
 @media (min-width: 1024px) {
   .nav {
     position: relative;
+    /* Mega menu panels open over the page, but slide under the sticky header. */
+    z-index: 99;
     display: block;
+    background: var(--color-background);
+    box-shadow: var(--shadow-header);
   }
 }
 

@@ -81,6 +81,8 @@ const en: Dictionary = {
     categories: "Categories",
     featuredCategories: "Featured categories",
     moreCategories: "More categories",
+    previousSlide: "Previous slide",
+    nextSlide: "Next slide",
   },
   product: {
     save: "Save {discount}%",
@@ -94,6 +96,7 @@ const en: Dictionary = {
     fullDetails: "View full details",
     images: "Product images",
     loading: "Loading product",
+    by: "by",
   },
   listing: {
     allProducts: "All products",
@@ -123,6 +126,12 @@ const en: Dictionary = {
     outOfStock: "Out of stock",
     productType: "Product type",
     vendor: "Brand",
+    viewAs: "View as",
+    gridView: "Grid",
+    listView: "List",
+    activeFilters: "Active filters",
+    removeFilter: "Remove filter {label}",
+    clearAll: "Clear all",
   },
   search: {
     title: "Search",
