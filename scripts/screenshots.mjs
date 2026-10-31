@@ -4,7 +4,8 @@
  *   npm run build && npm start      # in one terminal
  *   node scripts/screenshots.mjs    # in another (BASE_URL defaults to http://localhost:3000)
  *
- * Runs against the demo catalogue in English. Placing the demo order writes to `.data/`.
+ * Runs in English against the live floki24 catalogue. The demo order is only saved
+ * locally in `.data/`; no real order is placed.
  */
 import { mkdir } from "node:fs/promises";
 import { chromium, devices } from "playwright";
@@ -31,7 +32,21 @@ async function open(page, path) {
   await page.waitForLoadState("networkidle").catch(() => {});
 }
 
+/** Waits until the images on screen have loaded (galleries swap in larger sizes after hydration). */
+async function settle(page) {
+  await page.waitForTimeout(300);
+  await page.waitForFunction(() =>
+    [...document.images]
+      .filter(
+        (image) => image.getBoundingClientRect().top < innerHeight && image.loading !== "lazy",
+      )
+      .every((image) => image.complete),
+  );
+  await page.waitForTimeout(300);
+}
+
 async function shot(target, name, options = {}) {
+  await settle("page" in target ? target.page() : target);
   await target.screenshot({ path: `${OUT}${name}.jpg`, type: "jpeg", quality: 82, ...options });
   console.log(`✓ ${name}.jpg`);
 }
@@ -61,33 +76,36 @@ await page.keyboard.press("Escape");
 
 // Live search suggestions.
 const search = page.locator("header input[name=q]").first();
-await search.fill("wood bed");
+await search.fill("sauna");
 await page.waitForTimeout(1500);
 await shot(page, "predictive-search", { clip: { x: 0, y: 0, width: 1440, height: 760 } });
 
-// Search results with an active filter.
-await open(page, "/search?q=heavenly%20nest");
-await page.locator("aside fieldset label").nth(1).click();
+// Search results with a price filter.
+await open(page, "/search?q=sauna");
+await page.getByRole("spinbutton", { name: "From" }).fill("1500");
+await page.getByRole("spinbutton", { name: "To" }).fill("3000");
+await page.getByRole("button", { name: "Apply" }).click();
 await page.waitForURL(/filter=/);
 await page.waitForTimeout(1500);
 await shot(page, "search-filters");
 
 // Collection in list view.
-await open(page, "/collections/all");
+await open(page, "/collections/saunen-infrarotkabinen");
 await page.getByRole("button", { name: "List" }).click();
 await page.waitForTimeout(500);
 await shot(page, "list-view");
 await page.getByRole("button", { name: "Grid" }).click();
 
 // Product page.
-await open(page, "/collections/all");
-await page.locator("article h3 a").first().click();
-await page.getByRole("button", { name: "Add to cart" }).waitFor();
+await open(page, "/collections/saunen-infrarotkabinen");
+await page.locator("article").filter({ hasText: "In stock" }).locator("h3 a").first().click();
+await page.waitForURL(/\/products\//);
+await page.getByRole("button", { name: "Add to cart" }).first().waitFor();
 await page.waitForLoadState("networkidle").catch(() => {});
 await shot(page, "product");
 
 // "Added to cart" dialog, cart page and checkout.
-await page.getByRole("button", { name: "Add to cart" }).click();
+await page.getByRole("button", { name: "Add to cart" }).first().click();
 await page.getByRole("dialog").waitFor();
 await page.waitForTimeout(400);
 await shot(page, "added-to-cart");
@@ -104,7 +122,7 @@ await page.waitForTimeout(500);
 await shot(page, "checkout");
 await page.getByRole("button", { name: "Buy now" }).click();
 await page.waitForURL(/\/checkout\/orders\//);
-await page.locator("h1").waitFor();
+await page.locator("h1").waitFor({ timeout: 60_000 });
 await shot(page, "order-confirmation");
 
 // Account registration.
