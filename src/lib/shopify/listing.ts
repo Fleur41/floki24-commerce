@@ -36,10 +36,39 @@ export function parseFilterParams(values: string[]): ProductFilterInput[] {
   });
 }
 
+export type PriceRange = { min?: number; max?: number };
+
+/** Reads a `{"price":{"min":…,"max":…}}` filter input; `null` for any other filter. */
+export function parsePriceRange(input: string): PriceRange | null {
+  try {
+    const { price } = JSON.parse(input) as { price?: unknown };
+    if (!price || typeof price !== "object") return null;
+    const { min, max } = price as Record<string, unknown>;
+    return {
+      ...(typeof min === "number" && { min }),
+      ...(typeof max === "number" && { max }),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Serialises a price range as a filter input; `null` when the range is open on both ends. */
+export function priceRangeInput({ min, max }: PriceRange): string | null {
+  if (min === undefined && max === undefined) return null;
+  return JSON.stringify({
+    price: { ...(min !== undefined && { min }), ...(max !== undefined && { max }) },
+  });
+}
+
 /**
- * Filters that can be rendered as checkbox lists. Price ranges need a
- * dedicated range input and are left out for now.
+ * Filters the sidebar can show: lists with values, and the price range when
+ * the listing has prices at all (Shopify reports its bounds as `max`).
  */
-export function getCheckboxFilters(filters: Filter[]): Filter[] {
-  return filters.filter((filter) => filter.type !== "PRICE_RANGE" && filter.values.length > 0);
+export function getUsableFilters(filters: Filter[]): Filter[] {
+  return filters.filter((filter) =>
+    filter.type === "PRICE_RANGE"
+      ? (parsePriceRange(filter.values[0]?.input ?? "")?.max ?? 0) > 0
+      : filter.values.length > 0,
+  );
 }

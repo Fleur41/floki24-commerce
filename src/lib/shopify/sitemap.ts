@@ -1,3 +1,4 @@
+import { defaultLocale } from "@/i18n/config";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
 import { storefront } from "./client";
@@ -57,6 +58,8 @@ export async function getSitemapEntries(): Promise<{
     const data: { products: Connection; collections: Connection } = await storefront(
       SITEMAP_QUERY,
       { productsAfter, collectionsAfter },
+      // Handles are the same in every language; the sitemap has no [lang] segment.
+      { locale: defaultLocale },
     );
 
     if (hasMoreProducts) {

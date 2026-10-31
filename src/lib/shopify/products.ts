@@ -1,6 +1,8 @@
+import type { Locale } from "@/i18n/config";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
 import { isMockShop, storefront } from "./client";
+import { withTranslatedHandle } from "./handles";
 import { PRODUCT_FRAGMENT, PRODUCT_SUMMARY_FRAGMENT, gql } from "./fragments";
 import {
   reshapeProduct,
@@ -43,13 +45,25 @@ const PRODUCT_TYPES_QUERY = /* GraphQL */ `
   }
 `;
 
-export async function getProduct(handle: string): Promise<Product | null> {
+/** `locale` is only needed outside pages (Route Handlers); pages use their `[lang]`. */
+export async function getProduct(handle: string, locale?: Locale): Promise<Product | null> {
   "use cache";
   cacheLife("hours");
   cacheTag(cacheTags.products);
 
-  const data = await storefront<{ product: RawProduct | null }>(PRODUCT_QUERY, { handle });
-  return data.product && reshapeProduct(data.product);
+  return withTranslatedHandle(
+    "product",
+    handle,
+    async (candidate) => {
+      const data = await storefront<{ product: RawProduct | null }>(
+        PRODUCT_QUERY,
+        { handle: candidate },
+        { locale },
+      );
+      return data.product && reshapeProduct(data.product);
+    },
+    locale,
+  );
 }
 
 export async function getProductRecommendations(productId: string): Promise<ProductSummary[]> {

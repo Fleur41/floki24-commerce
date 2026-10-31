@@ -1,3 +1,4 @@
+import type { Locale } from "@/i18n/config";
 import { cacheLife, cacheTag } from "next/cache";
 import { cacheTags } from "./cache";
 import { isMockShop, storefront } from "./client";
@@ -103,7 +104,10 @@ export async function searchProducts(
   };
 }
 
-export async function predictiveSearch(searchTerm: string): Promise<PredictiveSearchResult> {
+export async function predictiveSearch(
+  searchTerm: string,
+  locale: Locale,
+): Promise<PredictiveSearchResult> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.products);
@@ -112,7 +116,7 @@ export async function predictiveSearch(searchTerm: string): Promise<PredictiveSe
 
   const data = await storefront<{
     predictiveSearch: { products: RawProductSummary[]; queries: { text: string }[] } | null;
-  }>(PREDICTIVE_SEARCH_QUERY, { query: searchTerm });
+  }>(PREDICTIVE_SEARCH_QUERY, { query: searchTerm }, { locale });
 
   return {
     products: data.predictiveSearch?.products.map(reshapeProductSummary) ?? [],

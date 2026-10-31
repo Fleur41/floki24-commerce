@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { ShopifyError, isMockShop, storefront } from "./client";
+import { ShopifyError, usesLocalAccounts, storefront } from "./client";
 import {
   MockCustomerError,
   createMockAccessToken,
@@ -72,7 +72,7 @@ export type CustomerCreateInput = {
 
 /** Creates a customer account. Throws `CustomerError` with code `TAKEN` for a known email. */
 export async function createCustomer(input: CustomerCreateInput): Promise<void> {
-  if (isMockShop) return mockCall(() => createMockCustomer(input));
+  if (usesLocalAccounts) return mockCall(() => createMockCustomer(input));
 
   const data = await storefront<CustomerCreatePayload>(CUSTOMER_CREATE_MUTATION, { input });
   const payload = data.customerCreate;
@@ -131,7 +131,7 @@ export async function createCustomerAccessToken(
   email: string,
   password: string,
 ): Promise<CustomerAccessToken> {
-  if (isMockShop) return mockCall(() => createMockAccessToken(email, password));
+  if (usesLocalAccounts) return mockCall(() => createMockAccessToken(email, password));
 
   const data = await storefront<AccessTokenCreatePayload>(ACCESS_TOKEN_CREATE_MUTATION, {
     input: { email, password },
@@ -159,7 +159,7 @@ const ACCESS_TOKEN_DELETE_MUTATION = /* GraphQL */ `
 `;
 
 export async function deleteCustomerAccessToken(accessToken: string): Promise<void> {
-  if (isMockShop) return deleteMockAccessToken(accessToken);
+  if (usesLocalAccounts) return deleteMockAccessToken(accessToken);
 
   await storefront(ACCESS_TOKEN_DELETE_MUTATION, { customerAccessToken: accessToken });
 }
@@ -202,7 +202,7 @@ type CustomerPayload = {
 
 /** The customer behind an access token, or `null` when the token is invalid or expired. */
 export async function getCustomer(accessToken: string): Promise<Customer | null> {
-  if (isMockShop) return getMockCustomer(accessToken);
+  if (usesLocalAccounts) return getMockCustomer(accessToken);
 
   const { customer } = await storefront<CustomerPayload>(CUSTOMER_QUERY, {
     customerAccessToken: accessToken,

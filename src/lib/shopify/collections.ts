@@ -11,6 +11,7 @@ import {
 } from "./fragments";
 import { paginationVariables, type ListingQuery } from "./listing";
 import { mockCatalogProducts, mockCollectionProducts } from "./mock-catalog";
+import { withTranslatedHandle } from "./handles";
 import { resolveCollectionHandle } from "./mock-shop";
 import { reshapeProductSummary, type RawProductSummary } from "./reshape";
 import type { Collection, Filter, PageInfo, ProductListing, ProductSummary } from "./types";
@@ -123,10 +124,12 @@ export async function getCollection(handle: string): Promise<Collection | null> 
   cacheLife("hours");
   cacheTag(cacheTags.collections);
 
-  const data = await storefront<{ collection: Collection | null }>(COLLECTION_QUERY, {
-    handle: resolveCollectionHandle(handle),
+  return withTranslatedHandle("collection", resolveCollectionHandle(handle), async (candidate) => {
+    const data = await storefront<{ collection: Collection | null }>(COLLECTION_QUERY, {
+      handle: candidate,
+    });
+    return data.collection;
   });
-  return data.collection;
 }
 
 export async function getCollectionProducts(
@@ -139,20 +142,21 @@ export async function getCollectionProducts(
 
   if (isMockShop) return mockCollectionProducts(resolveCollectionHandle(handle), query);
 
-  const data = await storefront<{
-    collection: { products: ProductConnection & { filters: Filter[] } } | null;
-  }>(COLLECTION_PRODUCTS_QUERY, {
-    handle: resolveCollectionHandle(handle),
-    sortKey: query.sortKey,
-    reverse: query.reverse,
-    filters: query.filters,
-    ...paginationVariables(query),
+  return withTranslatedHandle("collection", resolveCollectionHandle(handle), async (candidate) => {
+    const data = await storefront<{
+      collection: { products: ProductConnection & { filters: Filter[] } } | null;
+    }>(COLLECTION_PRODUCTS_QUERY, {
+      handle: candidate,
+      sortKey: query.sortKey,
+      reverse: query.reverse,
+      filters: query.filters,
+      ...paginationVariables(query),
+    });
+    if (!data.collection) return null;
+
+    const { nodes, filters, pageInfo } = data.collection.products;
+    return { products: nodes.map(reshapeProductSummary), filters, pageInfo };
   });
-
-  if (!data.collection) return null;
-
-  const { nodes, filters, pageInfo } = data.collection.products;
-  return { products: nodes.map(reshapeProductSummary), filters, pageInfo };
 }
 
 /** Products across the whole catalog — backs the virtual `/collections/all`. */

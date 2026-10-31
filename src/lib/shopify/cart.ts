@@ -1,4 +1,4 @@
-import { ShopifyError, isMockShop, storefront } from "./client";
+import { ShopifyError, usesDemoCheckout, storefront } from "./client";
 import { CART_FRAGMENT, gql } from "./fragments";
 import { reshapeCart, type RawCart } from "./reshape";
 import type { Cart } from "./types";
@@ -133,7 +133,7 @@ const CART_DISCOUNT_CODES_UPDATE_MUTATION = gql(
  */
 function toCart(raw: RawCart): Cart {
   const cart = reshapeCart(raw);
-  return isMockShop ? { ...cart, checkoutUrl: "/checkout" } : cart;
+  return usesDemoCheckout ? { ...cart, checkoutUrl: "/checkout" } : cart;
 }
 
 function unwrapPayload(payload: CartPayload, operation: string): Cart {
