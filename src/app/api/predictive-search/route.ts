@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { getRequestLocale } from "@/i18n/server";
 import { predictiveSearch } from "@/lib/shopify/search";
 
 const MAX_QUERY_LENGTH = 100;
@@ -9,5 +10,5 @@ export async function GET(request: NextRequest) {
     return Response.json({ products: [], queries: [] });
   }
 
-  return Response.json(await predictiveSearch(query));
+  return Response.json(await predictiveSearch(query, await getRequestLocale()));
 }
